@@ -1,0 +1,204 @@
+POST /cdofferings----------------------Only Admin
+{
+	"interestRate": 0.025,
+	"term": 5
+}
+{
+	"interestRate": 0.015,
+	"term": 6
+}
+{
+	"interestRate": 0.025,
+	"term": -----------------------------------ERROR term cannot be left blank
+}
+{
+	"interestRate": 1.025,----------------------ERROR interestRate cannot be greater than or equal to 1
+	"term": 5
+}
+{
+	"interestRate": 0.025,
+	"term": -2-----------------------------------ERROR term cannot be less than 1
+}
+{
+	"interestRate": -0.325,-----------------------ERROR interestRate cannot be less than or equal to 0
+	"term": 5
+}
+
+GET /cdofferings------------------------Admin and User
+
+
+ POST /accountholder-------------------------only Admin
+
+ {
+     "firstName": "Saadiq",
+    "middleName": "",
+    "lastName": "",---------------------------------ERROR last name cannot be left empty
+    "ssn": "123456789"
+
+ }
+{
+     "firstName": "",---------------------------------ERROR first name cannot be left empty
+    "middleName": "",
+    "lastName": "Manji",
+    "ssn": "123456789"
+
+ }
+{
+     "firstName": "Saadiq",
+    "middleName": "",
+    "lastName": "Manji",
+    "ssn": ""---------------------------------ERROR ssn cannot be left empty
+
+ }
+
+ {
+     "firstName": "Monisha",
+    "lastName": "Madhu",
+    "ssn": "987654321"
+    "contact" : {
+		"phone": "5552121212"
+	},
+	"user" : {
+		"id": 1
+	}
+
+ }
+
+ {
+     "firstName": "Prasob",
+    "lastName": "Kizhedath",
+    "ssn": "567891234"
+    "contact" : {
+		"phone": "5552121212"
+	},
+	"user" : {
+		"id": 1
+	}
+
+ }
+
+{
+     "firstName": "Gayathri",
+    "middleName": "Pradeep",
+    "lastName": "Kumar",
+    "ssn": "123498765"
+     "contact" : {
+		"phone": "5552121212"
+	},
+	"user" : {
+		"id": 1
+	}
+ }
+
+GET /accountholders-----------------------------------only Admin
+GET /accountholder/1-----------------------------------only Admin
+GET /accountholder/5----------------------ERROR invalid id
+
+POST /accountholder/1/contactdetails-----------------------------------only Admin
+{
+
+
+}
+
+
+POST /accountholder/1/checkingaccounts
+{
+	"balance": 10000
+}
+POST /accountholder/1/checkingaccounts
+{
+	"balance": -10000-------------------ERROR balance cannot be less than 0
+}
+
+POST /accountholder/5/checkingaccounts---------------ERROR Accountholder does not exist with the given id
+GET /accountholder/2/checkingaccounts
+GET /accountholder/6/checkingaccounts-----------------ERROR Accountholder does not exist with the given id
+
+POST /accountholder/1/savingsaccounts
+{
+	"balance": 10000
+}
+POST /accountholder/1/savingsaccounts
+{
+	"balance": -10000-------------------ERROR balance cannot be less than 0
+}
+
+POST /accountholder/5/savingsaccounts---------------ERROR Accountholder does not exist with the given id
+GET /accountholder/2/savingsaccounts
+GET /accountholder/5/savingsaccounts-------------------ERROR Accountholder does not exist with the given id
+
+POST /accountholder/1/cdaccounts
+{
+	"balance": 10000,
+	"cdOffering": {
+		“id”: 1
+	}
+}
+POST /accountholder/1/cdaccounts
+{
+	"balance": -10000,-------------------ERROR balance cannot be less than 0
+	"cdOffering": {
+		“id”: 1
+	}
+}
+POST /accountholder/5/cdaccounts---------------ERROR Accountholder does not exist with the given id
+ 
+GET /accountholder/1/cdaccounts
+GET /accountholder/1/cdaccounts---------------ERROR Accountholder does not exist with the given id
+
+User table created
+Admin is manually given
+
+(id integer, active boolean,password varchar,roles varchar,user_name varchar);
+
+POST /authenticate
+
+{
+	"username": "admin",
+	"password": "adminpass"
+}
+
+POST /authenticate/createuser
+
+header: Authorization: Bearer <admin token>
+
+body:
+{
+	"userName": "sadiq",
+	"password": "pass",
+	"active": true,
+	"roles": "ROLE_USER"
+}
+
+POST /accountholder/
+
+header: Authorization: Bearer <admin token>
+
+body:
+{
+	"firstName": "Sadiq",
+	"lastName": "Manji",
+	"ssn": "123456789",
+	"contact" : {
+		"phone": "5552121212"
+	},
+	"user" : {
+		"id": 1
+	}
+}
+
+POST /authenticate
+
+body:
+{
+	"username": "sadiq",
+	"password": "pass"
+}
+
+GET /Me
+
+header: Authorization: Bearer <account holder token>
+
+
+
+
