@@ -1,18 +1,34 @@
 package com.meritamerica.assignment7.models;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.*;
+import javax.validation.constraints.*;
+
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Inheritance;
+import javax.persistence.JoinColumn;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToMany;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.meritamerica.assignment7.enumerations.Money;
 
 @MappedSuperclass
+//@Entity(name = "BankAccount")
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class BankAccount {
 
 	private  double balance;
 	private  double interestRate;
 	private  long accountNumber;
 	private  LocalDateTime openingDate;
-	
+
 	private static long nextAccountNumber = 1;
+	
 	
 	public BankAccount(){
 	
@@ -48,4 +64,5 @@ public abstract class BankAccount {
 	public void setOpeningDate(LocalDateTime openingDate) {
 		this.openingDate = openingDate;
 	}
+
 }

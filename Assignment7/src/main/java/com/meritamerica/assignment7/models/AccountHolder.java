@@ -48,9 +48,11 @@ public class AccountHolder {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "accountHolder")
 	private List<CDAccount> cdAccList = new ArrayList<>();
 	
+	
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	private User user;
+	
 	
 	public User getUser() {
 		return user;
