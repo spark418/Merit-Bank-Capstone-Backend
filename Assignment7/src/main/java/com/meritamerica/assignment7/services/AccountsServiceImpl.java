@@ -4,15 +4,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.meritamerica.assignment7.repository.CheckingAccountRepository;
+import com.meritamerica.assignment7.repository.DBACheckingAccountRepository;
+import com.meritamerica.assignment7.repository.RegularIRAAccountRepository;
+import com.meritamerica.assignment7.repository.RolloverIRAAccountRepository;
+import com.meritamerica.assignment7.repository.RothIRAAccountRepository;
 import com.meritamerica.assignment7.repository.SavingsAccountRepository;
 import com.meritamerica.assignment7.models.CDOffering;
 import com.meritamerica.assignment7.exceptions.ExceedsCombinedBalanceLimitException;
+import com.meritamerica.assignment7.exceptions.ExceedsNumberOfAccountsLimitException;
 import com.meritamerica.assignment7.exceptions.NegativeAmountException;
 import com.meritamerica.assignment7.exceptions.NoResourceFoundException;
 import com.meritamerica.assignment7.models.AccountHolder;
 import com.meritamerica.assignment7.models.CDAccount;
 import com.meritamerica.assignment7.models.CDAccountDTO;
 import com.meritamerica.assignment7.models.CheckingAccount;
+import com.meritamerica.assignment7.models.DBACheckingAccount;
+import com.meritamerica.assignment7.models.RegularIRAAccount;
+import com.meritamerica.assignment7.models.RolloverIRAAccount;
+import com.meritamerica.assignment7.models.RothIRAAccount;
 import com.meritamerica.assignment7.models.SavingsAccount;
 import com.meritamerica.assignment7.repository.AccountHolderRepository;
 import com.meritamerica.assignment7.repository.CDAccountRepository;
@@ -35,10 +44,24 @@ public class AccountsServiceImpl implements AccountsService {
 	
 	@Autowired
 	CDOfferingRepository cdOfferingRepository;
-
+	
+	@Autowired
+	DBACheckingAccountRepository dbaCheckingAccountRepository;
+	
+	@Autowired
+	RolloverIRAAccountRepository rolloverIRAAccountRepository;
+	
+	@Autowired
+	RothIRAAccountRepository rothIRAAccountRepository;
+	
+	@Autowired
+	RegularIRAAccountRepository regularIRAAccountRepository;
+	
 	@Override
-	public CheckingAccount addCheckingAccount(int accountHolderId, CheckingAccount checkingAccount)throws NoResourceFoundException, NegativeAmountException, ExceedsCombinedBalanceLimitException {
-
+	public CheckingAccount addCheckingAccount(int accountHolderId, CheckingAccount checkingAccount)throws NoResourceFoundException, NegativeAmountException, 
+	ExceedsCombinedBalanceLimitException,ExceedsNumberOfAccountsLimitException {
+		
+		
 		if(checkingAccount.getBalance()<0) {
 			throw new NegativeAmountException();
 		} 	
@@ -46,6 +69,9 @@ public class AccountsServiceImpl implements AccountsService {
 		AccountHolder accountHolder = accountHolderRepository.findById(accountHolderId).orElse(null);
 		if(accountHolder==null) {
 			throw new NoResourceFoundException("Invalid id");
+		}
+		if(accountHolder.getNumberOfCheckingAccounts()==1) {
+			throw new ExceedsNumberOfAccountsLimitException("Only 1 Personal Checking Account permitted");
 		}
 		if (accountHolder.getCombinedBalance()+checkingAccount.getBalance()>250000) {
 			throw new ExceedsCombinedBalanceLimitException("exceeds limit of amount 250,000 max");
@@ -57,7 +83,8 @@ public class AccountsServiceImpl implements AccountsService {
 	}
 
 	@Override
-	public SavingsAccount addSavingsAccount(int accountHolderId, SavingsAccount savingsAccount) throws NoResourceFoundException, NegativeAmountException, ExceedsCombinedBalanceLimitException {
+	public SavingsAccount addSavingsAccount(int accountHolderId, SavingsAccount savingsAccount) throws NoResourceFoundException, NegativeAmountException, 
+	ExceedsCombinedBalanceLimitException,ExceedsNumberOfAccountsLimitException {
 		if(savingsAccount.getBalance()<0) {
 			throw new NegativeAmountException();
 		} 	
@@ -65,6 +92,9 @@ public class AccountsServiceImpl implements AccountsService {
 		AccountHolder accountHolder = accountHolderRepository.findById(accountHolderId).orElse(null);
 		if(accountHolder==null) {
 			throw new NoResourceFoundException("Invalid id");
+		}
+		if(accountHolder.getNumberOfSavingsAccounts()== 1) {
+			throw new ExceedsNumberOfAccountsLimitException("Only 1 Savings Account permitted");
 		}
 		if (accountHolder.getCombinedBalance()+savingsAccount.getBalance()>250000) {
 			throw new ExceedsCombinedBalanceLimitException("exceeds limit of amount 250,000 max");
@@ -87,8 +117,103 @@ public class AccountsServiceImpl implements AccountsService {
 		}	
 		CDOffering cdOffer=cdOfferingRepository.findById(cdAccDTO.getCdOffering().getId()).orElse(null);
 		CDAccount cd= new CDAccount(cdOffer,cdAccDTO.getBalance());
+		
 		cd.setAccountHolder(accountHolder);
 		return cdAccountRepository.save(cd);
 	}
+
+	@Override
+	public DBACheckingAccount addDBACheckingAccount(int accountHolderId, DBACheckingAccount dbaCheckingAccount)
+			throws NoResourceFoundException, NegativeAmountException, ExceedsCombinedBalanceLimitException,ExceedsNumberOfAccountsLimitException {
+		if(dbaCheckingAccount.getBalance()<0) {
+			throw new NegativeAmountException();
+		} 	
+			
+		AccountHolder accountHolder = accountHolderRepository.findById(accountHolderId).orElse(null);
+		if(accountHolder==null) {
+			throw new NoResourceFoundException("Invalid id");
+		}
+		if(accountHolder.getNumberOfDBACheckingAccounts()==3) {
+			throw new ExceedsNumberOfAccountsLimitException("Only maximum of 3 DBA Checking Accounts permitted");
+		}
+//		if (accountHolder.getCombinedBalance()+dbaCheckingAccount.getBalance()>250000) {
+//			throw new ExceedsCombinedBalanceLimitException("exceeds limit of amount 250,000 max");
+//		}
+	
+		DBACheckingAccount ch= new DBACheckingAccount(dbaCheckingAccount.getBalance());
+		ch.setAccountHolder(accountHolder);
+		return dbaCheckingAccountRepository.save(ch);
+	}
+
+	@Override
+	public RolloverIRAAccount addRolloverIRAAccount(int accountHolderId, RolloverIRAAccount rolloverIRAAccount)
+			throws NoResourceFoundException, NegativeAmountException, ExceedsCombinedBalanceLimitException,ExceedsNumberOfAccountsLimitException {
+		if(rolloverIRAAccount.getBalance()<0) {
+			throw new NegativeAmountException();
+		} 	
+			
+		AccountHolder accountHolder = accountHolderRepository.findById(accountHolderId).orElse(null);
+		if(accountHolder==null) {
+			throw new NoResourceFoundException("Invalid id");
+		}
+		if(accountHolder.getNumberOfRolloverIRAAccounts()==1) {
+			throw new ExceedsNumberOfAccountsLimitException("Only 1 Rollover IRA Account permitted");
+		}
+//		if (accountHolder.getCombinedBalance()+rolloverIRAAccount.getBalance()>250000) {
+//			throw new ExceedsCombinedBalanceLimitException("exceeds limit of amount 250,000 max");
+//		}
+	
+		RolloverIRAAccount ira= new RolloverIRAAccount(rolloverIRAAccount.getBalance());
+		ira.setAccountHolder(accountHolder);
+		return rolloverIRAAccountRepository.save(ira);
+	}
+
+	@Override
+	public RothIRAAccount addRothIRAAccount(int accountHolderId, RothIRAAccount rothIRAAccount)
+			throws NoResourceFoundException, NegativeAmountException, ExceedsCombinedBalanceLimitException,ExceedsNumberOfAccountsLimitException {
+		if(rothIRAAccount.getBalance()<0) {
+			throw new NegativeAmountException();
+		} 	
+			
+		AccountHolder accountHolder = accountHolderRepository.findById(accountHolderId).orElse(null);
+		if(accountHolder==null) {
+			throw new NoResourceFoundException("Invalid id");
+		}
+		if(accountHolder.getNumberOfRothIRAAccounts()==1) {
+			throw new ExceedsNumberOfAccountsLimitException("Only 1 Roth IRA Account permitted");
+		}
+//		if (accountHolder.getCombinedBalance()+rothIRAAccount.getBalance()>250000) {
+//			throw new ExceedsCombinedBalanceLimitException("exceeds limit of amount 250,000 max");
+//		}
+	
+		RothIRAAccount ira= new RothIRAAccount(rothIRAAccount.getBalance());
+		ira.setAccountHolder(accountHolder);
+		return rothIRAAccountRepository.save(ira);
+	}
+
+	@Override
+	public RegularIRAAccount addRegularIRAAccount(int accountHolderId, RegularIRAAccount regularIRAAccount)
+			throws NoResourceFoundException, NegativeAmountException, ExceedsCombinedBalanceLimitException, ExceedsNumberOfAccountsLimitException {
+		if(regularIRAAccount.getBalance()<0) {
+			throw new NegativeAmountException();
+		} 	
+			
+		AccountHolder accountHolder = accountHolderRepository.findById(accountHolderId).orElse(null);
+		if(accountHolder==null) {
+			throw new NoResourceFoundException("Invalid id");
+		}
+		if(accountHolder.getNumberOfRegularIRAAccounts()==1) {
+			throw new ExceedsNumberOfAccountsLimitException("Only 1 Regular IRA Account permitted");
+		}
+//		if (accountHolder.getCombinedBalance()+regularIRAAccount.getBalance()>250000) {
+//			throw new ExceedsCombinedBalanceLimitException("exceeds limit of amount 250,000 max");
+//		}
+	
+		RegularIRAAccount ira= new RegularIRAAccount(regularIRAAccount.getBalance());
+		ira.setAccountHolder(accountHolder);
+		return regularIRAAccountRepository.save(ira);
+	}
+
+
 
 }
