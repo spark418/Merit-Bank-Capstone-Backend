@@ -28,12 +28,7 @@ public class RolloverIRAAccount extends BankAccount{
 	public RolloverIRAAccount(double balance) {
 		super(balance,ROLLOVER_IRA_INTERESTRATE);
 	}
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
+	
 	public AccountHolder getAccountHolder() {
 		return accountHolder;
 	}

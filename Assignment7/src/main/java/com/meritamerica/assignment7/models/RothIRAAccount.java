@@ -28,12 +28,7 @@ public class RothIRAAccount extends BankAccount{
 	public RothIRAAccount(double balance) {
 		super(balance,ROTH_IRA_INTERESTRATE);
 	}
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
+	
 	public AccountHolder getAccountHolder() {
 		return accountHolder;
 	}

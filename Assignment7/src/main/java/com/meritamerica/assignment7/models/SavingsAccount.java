@@ -21,7 +21,6 @@ import com.meritamerica.assignment7.enumerations.TransactionType;
 public class SavingsAccount extends BankAccount {
 	
 
-	
 	public static final double SAVINGS_INTERESTRATE = 0.01;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -34,14 +33,6 @@ public class SavingsAccount extends BankAccount {
 	}
 	public SavingsAccount(double balance) {
 		super(balance, SAVINGS_INTERESTRATE);
-	}
-		
-	public void setId(int id) {
-		this.id = id;
-	}
-	
-	public int getId() {
-		return id;
 	}
 	
 	public AccountHolder getAccountHolder() {

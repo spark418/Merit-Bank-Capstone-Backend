@@ -14,9 +14,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name="CheckingAccount")
 public class CheckingAccount extends BankAccount {
 	
+
 	
 	public static final double CHECKING_INTERESTRATE= 0.0001;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accountholder_id")
 	@JsonIgnore
@@ -29,14 +30,6 @@ public class CheckingAccount extends BankAccount {
 		super(balance,CHECKING_INTERESTRATE);
 	}
 
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
 	public AccountHolder getAccountHolder() {
 		return accountHolder;
 	}
@@ -44,5 +37,9 @@ public class CheckingAccount extends BankAccount {
 	public void setAccountHolder(AccountHolder accountHolder) {
 		this.accountHolder = accountHolder;
 	}
+
+
+	
+
 	
 }

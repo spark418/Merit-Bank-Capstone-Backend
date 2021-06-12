@@ -28,12 +28,7 @@ public class DBACheckingAccount extends BankAccount {
 	public DBACheckingAccount(double balance) {
 		super(balance,DBA_CHECKING_INTERESTRATE);
 	}
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
+	
 	public AccountHolder getAccountHolder() {
 		return accountHolder;
 	}
