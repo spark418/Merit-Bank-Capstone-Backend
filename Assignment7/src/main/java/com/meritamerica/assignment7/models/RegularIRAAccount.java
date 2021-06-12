@@ -8,39 +8,35 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name="CheckingAccount")
-public class CheckingAccount extends BankAccount {
+@Table(name="RegularIRAAccount")
+public class RegularIRAAccount extends BankAccount{
 	
-	
-	public static final double CHECKING_INTERESTRATE= 0.0001;
+	public static final double REGULAR_IRA_INTERESTRATE= 0.0025;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accountholder_id")
 	@JsonIgnore
-    private AccountHolder accountHolder;
+	private AccountHolder accountHolder;
 	
-	public CheckingAccount() {
+	public RegularIRAAccount() {
 		
 	}
-	public CheckingAccount(double balance) {
-		super(balance,CHECKING_INTERESTRATE);
+	public RegularIRAAccount(double balance) {
+		super(balance,REGULAR_IRA_INTERESTRATE);
 	}
-
 	public int getId() {
 		return id;
 	}
-
 	public void setId(int id) {
 		this.id = id;
 	}
-
 	public AccountHolder getAccountHolder() {
 		return accountHolder;
 	}
-
 	public void setAccountHolder(AccountHolder accountHolder) {
 		this.accountHolder = accountHolder;
 	}

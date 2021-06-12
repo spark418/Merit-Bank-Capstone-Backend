@@ -1,5 +1,6 @@
 package com.meritamerica.assignment7;
 
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -22,5 +23,12 @@ public class Assignment7Application {
 	public Docket SwaggerConfiguration() {
 		return new Docket(DocumentationType.SWAGGER_2).select().build();
 	}
+	
+	@Bean
+    CommandLineRunner runner() {
+        return args -> {
+            System.out.println("CommandLineRunner running in the UnsplashApplication class...");
+        };
+    }
 
 }

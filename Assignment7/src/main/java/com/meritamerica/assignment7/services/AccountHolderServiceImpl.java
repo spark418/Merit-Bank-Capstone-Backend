@@ -11,6 +11,10 @@ import com.meritamerica.assignment7.models.AccountHolder;
 import com.meritamerica.assignment7.models.AccountHoldersContactDetails;
 import com.meritamerica.assignment7.models.CDAccount;
 import com.meritamerica.assignment7.models.CheckingAccount;
+import com.meritamerica.assignment7.models.DBACheckingAccount;
+import com.meritamerica.assignment7.models.RegularIRAAccount;
+import com.meritamerica.assignment7.models.RolloverIRAAccount;
+import com.meritamerica.assignment7.models.RothIRAAccount;
 import com.meritamerica.assignment7.models.SavingsAccount;
 import com.meritamerica.assignment7.repository.AccountHolderRepository;
 import com.meritamerica.assignment7.repository.AccountHoldersContactDetailsRepository;
@@ -92,6 +96,42 @@ public class AccountHolderServiceImpl implements AccountHolderService {
 			throw new NoResourceFoundException("Invalid id");
 		}
 		return accountHolder.getAccountHolderContactDetails();
+	}
+
+	@Override
+	public List<DBACheckingAccount> getDBACheckingAccount(int accountHolderId) throws NoResourceFoundException {
+		AccountHolder accountHolder = accountHolderRepository.findById(accountHolderId).orElse(null);
+		if (accountHolder == null) {
+			throw new NoResourceFoundException("Invalid id");
+		}
+		return accountHolder.getDbaCheckingAccountList();
+	}
+
+	@Override
+	public List<RegularIRAAccount> getRegularIRACheckingAccount(int accountHolderId) throws NoResourceFoundException {
+		AccountHolder accountHolder = accountHolderRepository.findById(accountHolderId).orElse(null);
+		if (accountHolder == null) {
+			throw new NoResourceFoundException("Invalid id");
+		}
+		return accountHolder.getRegularIRAAccountList();
+	}
+
+	@Override
+	public List<RothIRAAccount> getRothIRAAccount(int accountHolderId) throws NoResourceFoundException {
+		AccountHolder accountHolder = accountHolderRepository.findById(accountHolderId).orElse(null);
+		if (accountHolder == null) {
+			throw new NoResourceFoundException("Invalid id");
+		}
+		return accountHolder.getRothIRAAccountList();
+	}
+
+	@Override
+	public List<RolloverIRAAccount> getRolloverIRAAccount(int accountHolderId) throws NoResourceFoundException {
+		AccountHolder accountHolder = accountHolderRepository.findById(accountHolderId).orElse(null);
+		if (accountHolder == null) {
+			throw new NoResourceFoundException("Invalid id");
+		}
+		return accountHolder.getRolloverIRAAccountList();
 	}
 
 }

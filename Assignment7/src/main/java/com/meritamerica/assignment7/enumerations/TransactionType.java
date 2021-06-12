@@ -1,6 +1,6 @@
 package com.meritamerica.assignment7.enumerations;
 
-public enum Money {
+public enum TransactionType {
 	Cash,
 	Check, 
 	ATM,

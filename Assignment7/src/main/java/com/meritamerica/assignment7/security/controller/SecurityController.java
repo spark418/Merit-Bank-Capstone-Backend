@@ -129,7 +129,8 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
-		httpSecurity.csrf().disable()
+		//httpSecurity.csrf().disable()
+		httpSecurity.cors().and().csrf().disable() //added .cors().and()
 				.authorizeRequests()
 				.antMatchers("/authenticate").permitAll()
 				.antMatchers("/swagger-ui/**").permitAll()
@@ -137,7 +138,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/configuration/**").permitAll()
 				.antMatchers("/swagger-resources/**").permitAll()
 				.antMatchers("/v2/api-docs").permitAll()
-				.antMatchers("/authenticate/createUser").hasRole("ADMIN")
+				.antMatchers("/authenticate/createuser").hasRole("ADMIN")
 				.antMatchers("/accountholder").hasRole("ADMIN")
 				.antMatchers(HttpMethod.GET,"/cdofferings").hasAnyRole("ADMIN", "USER")
 				.anyRequest().authenticated()

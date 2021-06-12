@@ -20,6 +20,7 @@ public class AccountHoldersContactDetails {
 	private int id;
 	private String phoneNum;
 	private String email;
+	private String address;
 
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "accountholder_id")
@@ -30,9 +31,11 @@ public class AccountHoldersContactDetails {
 
 	}
 
-	public AccountHoldersContactDetails(String phoneNum, String email) {
+	public AccountHoldersContactDetails(int id,String phoneNum, String email, String address) {
 		this.phoneNum = phoneNum;
 		this.email = email;
+		this.address = address;
+		this.id = id;
 	}
 
 	public int getId() {
@@ -65,5 +68,13 @@ public class AccountHoldersContactDetails {
 
 	public void setAccountHolder(AccountHolder accountHolder) {
 		this.accountHolder = accountHolder;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
 	}
 }
