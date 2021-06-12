@@ -14,8 +14,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name="CheckingAccount")
 public class CheckingAccount extends BankAccount {
 	
-
-	
 	public static final double CHECKING_INTERESTRATE= 0.0001;
 
 	@ManyToOne(fetch = FetchType.LAZY)

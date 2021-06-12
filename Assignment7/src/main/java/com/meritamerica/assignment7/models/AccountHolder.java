@@ -79,7 +79,6 @@ public class AccountHolder {
 		this.middleName = middleName;
 		this.lastName = lastName;
 		this.ssn = ssn;
-		//this.id = nextId++;
 	}
 
 	public AccountHolder() {
