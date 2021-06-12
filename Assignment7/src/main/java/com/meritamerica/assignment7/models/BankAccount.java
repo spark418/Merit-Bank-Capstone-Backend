@@ -4,22 +4,25 @@ import java.time.LocalDateTime;
 
 import javax.persistence.MappedSuperclass;
 
-@MappedSuperclass
+@Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class BankAccount {
 
 	private  double balance;
 	private  double interestRate;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private  long accountNumber;
 	private  LocalDateTime openingDate;
 	
-	private static long nextAccountNumber = 1;
+	
 	
 	public BankAccount(){
 	
 	}
 	public BankAccount(double balance, double interestRate) {
 		this.balance=balance;
-		this.accountNumber= nextAccountNumber++;
+	
 		this.interestRate = interestRate;
 		this.openingDate = LocalDateTime.now();
 	}

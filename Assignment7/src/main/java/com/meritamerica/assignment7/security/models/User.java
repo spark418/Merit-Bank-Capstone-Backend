@@ -17,7 +17,7 @@ import com.meritamerica.assignment7.models.AccountHoldersContactDetails;
 @Table(name = "User")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @NotBlank(message = "Username is mandatory")
     private String userName;

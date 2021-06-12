@@ -25,7 +25,7 @@ import com.meritamerica.assignment7.security.models.User;
 @Table(name="AccountHolder")
 public class AccountHolder {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	@NotBlank(message = "First Name is mandatory")
 	private String firstName;
@@ -34,7 +34,7 @@ public class AccountHolder {
 	private String lastName;
 	@NotBlank(message = "SSN is mandatory")
 	private String ssn;
-	private static int nextId = 1;
+	
 	
 	@OneToOne(fetch = FetchType.LAZY, mappedBy = "accountHolder")
 	private AccountHoldersContactDetails accountHolderContactDetails;
@@ -124,13 +124,6 @@ public class AccountHolder {
 		this.ssn = ssn;
 	}
 
-	public static int getNextId() {
-		return nextId;
-	}
-
-	public static void setNextId(int nextId) {
-		AccountHolder.nextId = nextId;
-	}
 
 	public AccountHoldersContactDetails getAccountHolderContactDetails() {
 		return accountHolderContactDetails;

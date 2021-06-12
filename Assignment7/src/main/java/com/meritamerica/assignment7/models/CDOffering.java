@@ -20,9 +20,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name = "CDOffering")
 public class CDOffering {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	private static int nextId = 1;
+	
 	private int term;
 	private double interestRate;
 	
@@ -45,7 +45,7 @@ public class CDOffering {
 	public CDOffering(int term, double interestRate) {
 		this.term = term;
 		this.interestRate = interestRate;
-		this.id = nextId++;
+		
 	}
 
 	public int getTerm() {

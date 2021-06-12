@@ -14,9 +14,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name="RothIRAAccount")
 public class RothIRAAccount extends BankAccount{
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int id;
+	
 	public static final double ROTH_IRA_INTERESTRATE= 0.0025;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -30,12 +28,7 @@ public class RothIRAAccount extends BankAccount{
 	public RothIRAAccount(double balance) {
 		super(balance,ROTH_IRA_INTERESTRATE);
 	}
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
+	
 	public AccountHolder getAccountHolder() {
 		return accountHolder;
 	}

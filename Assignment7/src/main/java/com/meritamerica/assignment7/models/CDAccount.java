@@ -19,9 +19,7 @@ import com.meritamerica.assignment7.models.CDOffering;
 @Entity
 @Table(name="CDAccount")
 public class CDAccount extends BankAccount {
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int id;
+	
 	
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cdoffering_id")
@@ -41,13 +39,7 @@ public class CDAccount extends BankAccount {
 		this.cdOffering=cdOffering;
 	}
 
-	public void setId(int id) {
-		this.id = id;
-	}
 	
-	public int getId() {
-		return id;
-	}
 		
 	public AccountHolder getAccountHolder() {
 		return accountHolder;
