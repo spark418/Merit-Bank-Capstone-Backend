@@ -13,11 +13,11 @@ import com.meritamerica.assignment7.enumerations.TransactionType;
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class BankAccount {
 
-	private  double balance;
-	private  double interestRate;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private  long accountNumber;
+	private  double balance;
+	private  double interestRate;
 	private  LocalDateTime openingDate;
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "sourceAccount")

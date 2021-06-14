@@ -80,8 +80,7 @@ public class AccountHolder {
 		this.middleName = middleName;
 		this.lastName = lastName;
 		this.ssn = ssn;
-		//this.id = nextId++;
-		//savingsAccountList.add(new SavingsAccount(0));
+
 	}
 
 	public AccountHolder() {

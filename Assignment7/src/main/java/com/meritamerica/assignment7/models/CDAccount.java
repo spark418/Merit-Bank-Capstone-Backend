@@ -39,8 +39,6 @@ public class CDAccount extends BankAccount {
 		this.cdOffering=cdOffering;
 	}
 
-	
-		
 	public AccountHolder getAccountHolder() {
 		return accountHolder;
 	}
