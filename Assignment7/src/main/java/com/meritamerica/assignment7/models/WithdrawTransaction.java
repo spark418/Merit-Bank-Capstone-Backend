@@ -1,5 +1,7 @@
 package com.meritamerica.assignment7.models;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,11 +22,15 @@ public class WithdrawTransaction extends Transaction {
 	      super();	
 	}
 	
-	public WithdrawTransaction( double amount, double balance, TransactionType type){
+	public WithdrawTransaction( double amount, double balance, TransactionType type,  BankAccount account){
 		super.setAmount(amount);
 		super.setType(type);
 		super.setPostedBalance(balance);
+		super.setDate(new Date());
 	}
+	
+	
+	
     
 	@Override
 	public void process() throws NegativeAmountException{

@@ -24,11 +24,10 @@ public class Assignment7Application {
 		return new Docket(DocumentationType.SWAGGER_2).select().build();
 	}
 	
-	@Bean
-    CommandLineRunner runner() {
-        return args -> {
-            System.out.println("CommandLineRunner running in the UnsplashApplication class...");
-        };
-    }
+	/*
+	 * @Bean CommandLineRunner runner() { return args -> { System.out.
+	 * println("CommandLineRunner running in the UnsplashApplication class..."); };
+	 * }
+	 */
 
 }

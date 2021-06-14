@@ -45,6 +45,7 @@ public class AccountHolder {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "accountHolder")
 	private List<SavingsAccount> savingsAccountList = new ArrayList<>();
 	
+	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "accountHolder")
 	private List<CDAccount> cdAccList = new ArrayList<>();
 
@@ -80,6 +81,7 @@ public class AccountHolder {
 		this.lastName = lastName;
 		this.ssn = ssn;
 		//this.id = nextId++;
+		//savingsAccountList.add(new SavingsAccount(0));
 	}
 
 	public AccountHolder() {
@@ -200,7 +202,6 @@ public class AccountHolder {
 		}
 		return checking;
 	}
-	
 	public SavingsAccount addSavingsAccount(double openingBalance) {
 		SavingsAccount savings = null;
 		if ((getSavingsBalance() + getCheckingBalance() + openingBalance) < 250000) {
@@ -209,7 +210,6 @@ public class AccountHolder {
 		}
 		return savings;
 	}
-
 	public CDAccount addCDAccount(CDAccount cdAccount) {
 		this.cdAccList.add(cdAccount);
 		return cdAccount;
@@ -339,6 +339,17 @@ public class AccountHolder {
 		 return getNumberOfCDAccounts()+getNumberOfSavingsAccounts()+getNumberOfCheckingAccounts()+getNumberOfDBACheckingAccounts()+
 				 getNumberOfRolloverIRAAccounts()+ getNumberOfRegularIRAAccounts()+getNumberOfRothIRAAccounts();
 	 }
+	
+	public List<BankAccount> allAccounts(){
+		List<BankAccount> accounts = new ArrayList<>(cdAccList);
+		accounts.addAll(savingsAccountList);
+		accounts.addAll(checkingAccountList);
+		accounts.addAll(dbaCheckingAccountList);
+		accounts.addAll(regularIRAAccountList);
+		accounts.addAll(rothIRAAccountList);
+		accounts.addAll(rolloverIRAAccountList);
+		return accounts;
+	}
 
 	
 }

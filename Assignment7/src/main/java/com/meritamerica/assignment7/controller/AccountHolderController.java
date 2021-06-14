@@ -44,6 +44,8 @@ public class AccountHolderController {
 	public AccountHolder addAccountHolder(@RequestBody @Valid AccountHolder accountHolder) {
 		try {
 			logs.info("In AccountHolderController.addAccountHolder");
+			//accountHolder.addSavingsAccount(100);
+			//accountHolder.addCheckingAccount(100);
 			return accountHolderService.addAccountHolder(accountHolder);
 		} catch (InvalidAccountDetailsException e) {
 			// TODO Auto-generated catch block

@@ -1,5 +1,7 @@
 package com.meritamerica.assignment7.services;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,7 @@ import com.meritamerica.assignment7.exceptions.ExceedsNumberOfAccountsLimitExcep
 import com.meritamerica.assignment7.exceptions.NegativeAmountException;
 import com.meritamerica.assignment7.exceptions.NoResourceFoundException;
 import com.meritamerica.assignment7.models.AccountHolder;
+import com.meritamerica.assignment7.models.BankAccount;
 import com.meritamerica.assignment7.models.CDAccount;
 import com.meritamerica.assignment7.models.CDAccountDTO;
 import com.meritamerica.assignment7.models.CheckingAccount;
@@ -213,7 +216,91 @@ public class AccountsServiceImpl implements AccountsService {
 		ira.setAccountHolder(accountHolder);
 		return regularIRAAccountRepository.save(ira);
 	}
+	
+	@Override
+	public CheckingAccount getCheckingAccount(int accountHolderId, long accountNum) {
+		// TODO Auto-generated method stub
+		AccountHolder accountHolder = accountHolderRepository.findById(accountHolderId).orElse(null);
+		return accountHolder.getCheckingAccountList().get(0);
+	}
 
+	@Override
+	public DBACheckingAccount getDBACheckingAccount(int accountHolderId, long accountNum) {
+		// TODO Auto-generated method stub
+		AccountHolder accountHolder = accountHolderRepository.findById(accountHolderId).orElse(null);
+		for(int i = 0; i < accountHolder.getNumberOfDBACheckingAccounts(); i++) {
+			if(accountNum == accountHolder.getDbaCheckingAccountList().get(i).getAccountNumber()) {
+				return accountHolder.getDbaCheckingAccountList().get(i);
+			}
+		}
+		return null;
+	}
 
+	@Override
+	public SavingsAccount getSavingsAccount(int accountHolderId, long accountNum) {
+		// TODO Auto-generated method stub
+		AccountHolder accountHolder = accountHolderRepository.findById(accountHolderId).orElse(null);
+		if(accountHolder.getNumberOfSavingsAccounts() == 1)
+		   return accountHolder.getSavingsAccountList().get(0);
+		else return null;
+	}
+
+	@Override
+	public RolloverIRAAccount getRolloverIRAAccount(int accountHolderId, long accountNum) {
+		// TODO Auto-generated method stub
+		AccountHolder accountHolder = accountHolderRepository.findById(accountHolderId).orElse(null);
+		if(accountHolder.getNumberOfRolloverIRAAccounts() == 1)
+		   return accountHolder.getRolloverIRAAccountList().get(0);
+		else return null;
+	
+	}
+
+	@Override
+	public RothIRAAccount getRothIRAAccount(int accountHolderId, long accountNum) {
+		// TODO Auto-generated method stub
+		AccountHolder accountHolder = accountHolderRepository.findById(accountHolderId).orElse(null);
+		if(accountHolder.getNumberOfRothIRAAccounts() == 1)
+		   return accountHolder.getRothIRAAccountList().get(0);
+		else return null;
+	}
+
+	@Override
+	public RegularIRAAccount getRegularIRAAccount(int accountHolderId, long accountNum) {
+		// TODO Auto-generated method stub
+		AccountHolder accountHolder = accountHolderRepository.findById(accountHolderId).orElse(null);
+		if(accountHolder.getNumberOfRegularIRAAccounts() == 1)
+		   return accountHolder.getRegularIRAAccountList().get(0);
+		else return null;
+	}
+
+	@Override
+	public CDAccount getCDAccount(int accountHolderId, long accountNum) {
+		// TODO Auto-generated method stub
+		AccountHolder accountHolder = accountHolderRepository.findById(accountHolderId).orElse(null);
+
+		for(int i = 0; i < accountHolder.getNumberOfCDAccounts(); i++) {
+			if(accountNum == accountHolder.getCdAccList().get(i).getAccountNumber()) {
+				return accountHolder.getCdAccList().get(i);
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public BankAccount findAccount(long accountNum, int accountHolderId) {
+		// TODO Auto-generated method stub
+		AccountHolder accountHolder = accountHolderRepository.findById(accountHolderId).orElse(null);
+		BankAccount account = null;
+		List<BankAccount> accounts = accountHolder.allAccounts();
+		//accountHolder
+		for(int i = 0; i < accounts.size(); i ++) {
+			if(accounts.get(i).getAccountNumber() == accountNum) account = accounts.get(i);
+		}
+		return account;
+	}
+	
+
+	
+	
 
 }

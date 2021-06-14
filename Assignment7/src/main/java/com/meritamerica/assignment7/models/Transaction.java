@@ -37,6 +37,8 @@ public  abstract class Transaction{
 	@JsonIgnore
 	private BankAccount targetAccount;
 	
+	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "source_account_id")
 	@JsonIgnore
@@ -47,6 +49,12 @@ public  abstract class Transaction{
 	public Transaction(double amount, double postedBalance, TransactionType type){
 		this.amount = amount;
 		this.postedBalance = postedBalance;
+		this.type = type;
+		date = new java.util.Date();
+	}
+	
+	public Transaction(double amount, TransactionType type, BankAccount source){
+		this.amount = amount;
 		this.type = type;
 		date = new java.util.Date();
 	}
@@ -85,6 +93,22 @@ public  abstract class Transaction{
 
 	public void setDate(java.util.Date date) {
 		this.date = date;
+	}
+	
+	public BankAccount getTargetAccount() {
+		return targetAccount;
+	}
+
+	public void setTargetAccount(BankAccount targetAccount) {
+		this.targetAccount = targetAccount;
+	}
+
+	public BankAccount getSourceAccount() {
+		return sourceAccount;
+	}
+
+	public void setSourceAccount(BankAccount sourceAccount) {
+		this.sourceAccount = sourceAccount;
 	}
 
 }

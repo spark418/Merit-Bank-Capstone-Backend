@@ -1,6 +1,7 @@
 package com.meritamerica.assignment7.models;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -19,10 +20,12 @@ public class DepositTransaction extends Transaction{
       super();	
     }
 
-	public DepositTransaction(double amount, double balance, TransactionType type){
+	public DepositTransaction(double amount, double balance, TransactionType type, BankAccount target){
 		super.setAmount(amount);
 		super.setType(type);
 		super.setPostedBalance(balance);
+		super.setTargetAccount(target);
+		super.setDate(new Date());
 	}
 
 	@Override
