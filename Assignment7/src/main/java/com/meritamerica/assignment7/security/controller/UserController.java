@@ -658,10 +658,6 @@ public class UserController {
 		return transactionService.addTransferTransaction(sourceTransaction, account, target);
 	}
 	
-	
-	
-	
-	
 }
 
 
