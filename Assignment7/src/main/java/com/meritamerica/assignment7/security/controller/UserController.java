@@ -247,6 +247,9 @@ public class UserController {
 		
 	}
 	
+	
+	//Saving account transaction endpoints 
+	
 	@PostMapping("/Me/savingsaccount/deposittransaction")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
@@ -304,6 +307,7 @@ public class UserController {
 		return transactionService.addTransferTransaction(sourceTransaction, account, target);
 	}
 	
+	//checking account transaction endpoints
 	
 	@PostMapping("/Me/checkingaccount/deposittransaction")
 	@ResponseStatus(HttpStatus.CREATED)
@@ -416,7 +420,248 @@ public class UserController {
 		target.setBalance(target.getBalance() + dto.getAmount());
 		return transactionService.addTransferTransaction(sourceTransaction, account, target);
 	}
-
+	
+	
+	//cd accounts transaction endpoints
+	
+	@PostMapping("/Me/cdaccount/{accountNum}/deposittransaction")
+	@ResponseStatus(HttpStatus.CREATED)
+	@Secured("ROLE_USER")
+	public Transaction depositToCDAccount(@RequestBody TransactionDTO dto, @PathVariable long accNum){
+		String username = jwtTokenUtil.getCurrentUserName();
+		User user = userService.getUserByUserName(username);
+		CDAccount account = accountsService.getCDAccount(user.getAccountHolder().getId(), accNum);
+		//account.setBalance(dto.getAmount() + account.getBalance());
+		
+		DepositTransaction transaction =  new DepositTransaction(dto.getAmount(), 
+		account.getBalance() + dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
+		account.setBalance(account.getBalance() + dto.getAmount());
+		
+		return transactionService.addDepositTransaction(transaction, account);
+		
+	}
+	
+	@PostMapping("/Me/cdaccount/{accountNum}/withdrawtransaction")
+	@ResponseStatus(HttpStatus.CREATED)
+	@Secured("ROLE_USER")
+	public Transaction withdrawToCDAccount(@RequestBody TransactionDTO dto,  @PathVariable long accNum){
+		String username = jwtTokenUtil.getCurrentUserName();
+		User user = userService.getUserByUserName(username);
+		CDAccount account = accountsService.getCDAccount(user.getAccountHolder().getId(), accNum);
+		//account.setBalance(dto.getAmount() + account.getBalance());
+		
+		WithdrawTransaction transaction =  new WithdrawTransaction(dto.getAmount(), 
+		account.getBalance() + dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
+		account.setBalance(account.getBalance() + dto.getAmount());
+		
+		return transactionService.addWithdrawTransaction(transaction, account);
+		
+	}
+	
+	@PostMapping("/Me/cdaccount/{accountNum}/transfer")
+	@ResponseStatus(HttpStatus.CREATED)
+	@Secured("ROLE_USER")
+	public Transaction TransferFromCD(@RequestBody TransactionDTO dto,  @PathVariable long accNum){
+		
+		String username = jwtTokenUtil.getCurrentUserName();
+		User user = userService.getUserByUserName(username);
+		CDAccount account = accountsService.getCDAccount(user.getAccountHolder().getId(), accNum);
+		
+		BankAccount target = accountsService.findAccount(dto.getTarget(), dto.getTargetId());
+		
+		TransferTransaction sourceTransaction = new TransferTransaction(dto.getAmount(), target.getBalance() + dto.getAmount(), 
+		account.getBalance() + -dto.getAmount(),
+		TransactionType.valueOf(dto.getTransactionType()), account, target);
+		
+	    account.setBalance(account.getBalance() + -dto.getAmount());
+		target.setBalance(target.getBalance() + dto.getAmount());
+		return transactionService.addTransferTransaction(sourceTransaction, account, target);
+	}
+	
+	//Regular IRA Account Transactions endpoints
+	
+	
+	@PostMapping("/Me/RegularIRA/deposittransaction")
+	@ResponseStatus(HttpStatus.CREATED)
+	@Secured("ROLE_USER")
+	public Transaction depositToRegularIRAAccount(@RequestBody TransactionDTO dto){
+		String username = jwtTokenUtil.getCurrentUserName();
+		User user = userService.getUserByUserName(username);
+		RegularIRAAccount account = user.getAccountHolder().getRegularIRAAccountList().get(0);
+		//account.setBalance(dto.getAmount() + account.getBalance());
+		
+		DepositTransaction transaction =  new DepositTransaction(dto.getAmount(), 
+		account.getBalance() + dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
+		account.setBalance(account.getBalance() + dto.getAmount());
+		
+		return transactionService.addDepositTransaction(transaction, account);
+		
+	}
+	
+	@PostMapping("/Me/RegularIRA/withdrawtransaction")
+	@ResponseStatus(HttpStatus.CREATED)
+	@Secured("ROLE_USER")
+	public Transaction withdrawToRegularIRAAccount(@RequestBody TransactionDTO dto){
+		String username = jwtTokenUtil.getCurrentUserName();
+		User user = userService.getUserByUserName(username);
+		RegularIRAAccount account = user.getAccountHolder().getRegularIRAAccountList().get(0);
+		//account.setBalance(dto.getAmount() + account.getBalance());
+		
+		WithdrawTransaction transaction =  new WithdrawTransaction(dto.getAmount(), 
+		account.getBalance() + dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
+		account.setBalance(account.getBalance() + dto.getAmount());
+		
+		return transactionService.addWithdrawTransaction(transaction, account);
+		
+	}
+	
+	
+	
+	@PostMapping("/Me/RegularIRA/transfer")
+	@ResponseStatus(HttpStatus.CREATED)
+	@Secured("ROLE_USER")
+	public Transaction TransferFromRegularIRA(@RequestBody TransactionDTO dto){
+		
+		String username = jwtTokenUtil.getCurrentUserName();
+		User user = userService.getUserByUserName(username);
+		RegularIRAAccount account = user.getAccountHolder().getRegularIRAAccountList().get(0);
+		
+		BankAccount target = accountsService.findAccount(dto.getTarget(), dto.getTargetId());
+		
+		TransferTransaction sourceTransaction = new TransferTransaction(dto.getAmount(), target.getBalance() + dto.getAmount(), 
+		account.getBalance() + -dto.getAmount(),
+		TransactionType.valueOf(dto.getTransactionType()), account, target);
+		
+		account.setBalance(account.getBalance() + -dto.getAmount());
+		target.setBalance(target.getBalance() + dto.getAmount());
+		
+		return transactionService.addTransferTransaction(sourceTransaction, account, target);
+	}
+	
+	//Rollover IRA Account Transactions endpoints
+	
+	@PostMapping("/Me/RolloverIRA/deposittransaction")
+	@ResponseStatus(HttpStatus.CREATED)
+	@Secured("ROLE_USER")
+	public Transaction depositToRolloverIRAAccount(@RequestBody TransactionDTO dto){
+		String username = jwtTokenUtil.getCurrentUserName();
+		User user = userService.getUserByUserName(username);
+		RolloverIRAAccount account = user.getAccountHolder().getRolloverIRAAccountList().get(0);
+		//account.setBalance(dto.getAmount() + account.getBalance());
+		
+		DepositTransaction transaction =  new DepositTransaction(dto.getAmount(), 
+		account.getBalance() + dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
+		account.setBalance(account.getBalance() + dto.getAmount());
+		
+		return transactionService.addDepositTransaction(transaction, account);
+		
+	}
+	
+	@PostMapping("/Me/RolloverIRA/withdrawtransaction")
+	@ResponseStatus(HttpStatus.CREATED)
+	@Secured("ROLE_USER")
+	public Transaction withdrawToRolloverIRAAccount(@RequestBody TransactionDTO dto){
+		String username = jwtTokenUtil.getCurrentUserName();
+		User user = userService.getUserByUserName(username);
+		RolloverIRAAccount account = user.getAccountHolder().getRolloverIRAAccountList().get(0);
+		//account.setBalance(dto.getAmount() + account.getBalance());
+		
+		WithdrawTransaction transaction =  new WithdrawTransaction(dto.getAmount(), 
+		account.getBalance() + dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
+		account.setBalance(account.getBalance() + dto.getAmount());
+		
+		return transactionService.addWithdrawTransaction(transaction, account);
+		
+	}
+	
+	
+	
+	@PostMapping("/Me/RolloverIRA/transfer")
+	@ResponseStatus(HttpStatus.CREATED)
+	@Secured("ROLE_USER")
+	public Transaction TransferFromRolloverIRA(@RequestBody TransactionDTO dto){
+		
+		String username = jwtTokenUtil.getCurrentUserName();
+		User user = userService.getUserByUserName(username);
+		RolloverIRAAccount account = user.getAccountHolder().getRolloverIRAAccountList().get(0);
+		
+		BankAccount target = accountsService.findAccount(dto.getTarget(), dto.getTargetId());
+		
+		TransferTransaction sourceTransaction = new TransferTransaction(dto.getAmount(), target.getBalance() + dto.getAmount(), 
+		account.getBalance() + -dto.getAmount(),
+		TransactionType.valueOf(dto.getTransactionType()), account, target);
+		
+		account.setBalance(account.getBalance() + -dto.getAmount());
+		target.setBalance(target.getBalance() + dto.getAmount());
+		
+		return transactionService.addTransferTransaction(sourceTransaction, account, target);
+	}
+	
+	
+	//Roth IRA Account Transactions endpoints
+	
+	
+	@PostMapping("/Me/RothIRA/deposittransaction")
+	@ResponseStatus(HttpStatus.CREATED)
+	@Secured("ROLE_USER")
+	public Transaction depositToRothIRAAccount(@RequestBody TransactionDTO dto){
+		String username = jwtTokenUtil.getCurrentUserName();
+		User user = userService.getUserByUserName(username);
+		RothIRAAccount account = user.getAccountHolder().getRothIRAAccountList().get(0);
+		//account.setBalance(dto.getAmount() + account.getBalance());
+		
+		DepositTransaction transaction =  new DepositTransaction(dto.getAmount(), 
+		account.getBalance() + dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
+		account.setBalance(account.getBalance() + dto.getAmount());
+		
+		return transactionService.addDepositTransaction(transaction, account);
+		
+	}
+	
+	@PostMapping("/Me/RothIRA/withdrawtransaction")
+	@ResponseStatus(HttpStatus.CREATED)
+	@Secured("ROLE_USER")
+	public Transaction withdrawToRothIRAAccount(@RequestBody TransactionDTO dto){
+		String username = jwtTokenUtil.getCurrentUserName();
+		User user = userService.getUserByUserName(username);
+		RothIRAAccount account = user.getAccountHolder().getRothIRAAccountList().get(0);
+		//account.setBalance(dto.getAmount() + account.getBalance());
+		
+		WithdrawTransaction transaction =  new WithdrawTransaction(dto.getAmount(), 
+		account.getBalance() + dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
+		account.setBalance(account.getBalance() + dto.getAmount());
+		
+		return transactionService.addWithdrawTransaction(transaction, account);
+		
+	}
+	
+	
+	
+	@PostMapping("/Me/RothIRA/transfer")
+	@ResponseStatus(HttpStatus.CREATED)
+	@Secured("ROLE_USER")
+	public Transaction TransferFromRothIRA(@RequestBody TransactionDTO dto){
+		
+		String username = jwtTokenUtil.getCurrentUserName();
+		User user = userService.getUserByUserName(username);
+		RothIRAAccount account = user.getAccountHolder().getRothIRAAccountList().get(0);
+		
+		BankAccount target = accountsService.findAccount(dto.getTarget(), dto.getTargetId());
+		
+		TransferTransaction sourceTransaction = new TransferTransaction(dto.getAmount(), target.getBalance() + dto.getAmount(), 
+		account.getBalance() + -dto.getAmount(),
+		TransactionType.valueOf(dto.getTransactionType()), account, target);
+		
+		account.setBalance(account.getBalance() + -dto.getAmount());
+		target.setBalance(target.getBalance() + dto.getAmount());
+		
+		return transactionService.addTransferTransaction(sourceTransaction, account, target);
+	}
+	
+	
+	
+	
+	
 }
 
 
