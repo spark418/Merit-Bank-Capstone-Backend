@@ -319,10 +319,8 @@ public class TransactionController {
 				TransactionType.valueOf(dto.getTransactionType()),  accountsService.getSavingsAccount(id, accNum));
 				account.setBalance(account.getBalance() + dto.getAmount());
 				return transactionService.addWithdrawTransaction(transaction,  account);
-			}
+		  }
 			
-			
-	
 }
 
 class TransactionDTO{

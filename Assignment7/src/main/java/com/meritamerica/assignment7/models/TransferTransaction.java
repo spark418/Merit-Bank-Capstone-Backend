@@ -1,5 +1,7 @@
 package com.meritamerica.assignment7.models;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 
 import com.meritamerica.assignment7.enumerations.TransactionType;
@@ -19,6 +21,7 @@ public class TransferTransaction extends Transaction{
 		super.setSourceAccount(source);
 		super.setTargetAccount(target);
 		this.setTargetBalance(targetBalance);
+		super.setDate(new Date());
 	}
 	
 	

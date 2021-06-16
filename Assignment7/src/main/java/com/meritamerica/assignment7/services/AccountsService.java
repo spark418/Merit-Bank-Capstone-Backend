@@ -25,12 +25,14 @@ public interface AccountsService {
 	public RegularIRAAccount getRegularIRAAccount(int accountHolderId, long accountNum);
 	
 	public CheckingAccount addCheckingAccount(int accountHolderId, CheckingAccount checkingAccount) throws NoResourceFoundException, NegativeAmountException, ExceedsCombinedBalanceLimitException,ExceedsNumberOfAccountsLimitException;
+	
 	public DBACheckingAccount addDBACheckingAccount(int accountHolderId, DBACheckingAccount dbaCheckingAccount) throws NoResourceFoundException, NegativeAmountException, ExceedsCombinedBalanceLimitException,ExceedsNumberOfAccountsLimitException;
 	public SavingsAccount addSavingsAccount(int accountHolderId, SavingsAccount savingsAccount) throws NoResourceFoundException, NegativeAmountException, ExceedsCombinedBalanceLimitException,ExceedsNumberOfAccountsLimitException;
 	public CDAccount addCDAccount(int accountHolderId, CDAccountDTO cdAccount) throws NoResourceFoundException, NegativeAmountException;
 	public RolloverIRAAccount addRolloverIRAAccount(int accountHolderId, RolloverIRAAccount rolloverIRAAccount) throws NoResourceFoundException, NegativeAmountException, ExceedsCombinedBalanceLimitException,ExceedsNumberOfAccountsLimitException;
 	public RothIRAAccount addRothIRAAccount(int accountHolderId, RothIRAAccount rothIRAAccount) throws NoResourceFoundException, NegativeAmountException, ExceedsCombinedBalanceLimitException,ExceedsNumberOfAccountsLimitException;
 	public RegularIRAAccount addRegularIRAAccount(int accountHolderId, RegularIRAAccount regularIRAAccount) throws NoResourceFoundException, NegativeAmountException, ExceedsCombinedBalanceLimitException,ExceedsNumberOfAccountsLimitException;
-	
 	public BankAccount findAccount(long accountNum, int accountHolderId);
+	
+
 }
