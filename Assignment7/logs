@@ -17529,3 +17529,29 @@ org.springframework.security.web.firewall.RequestRejectedException: The request 
 2021-06-17 19:24:42.062  INFO 34776 --- [restartedMain] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
 2021-06-17 19:24:42.113  INFO 34776 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
 2021-06-17 19:24:42.645  INFO 34776 --- [restartedMain] c.m.assignment7.Assignment7Application   : Started Assignment7Application in 1.857 seconds (JVM running for 9763.609)
+2021-06-17 19:24:42.647  INFO 34776 --- [restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2021-06-17 19:27:05.181  INFO 34776 --- [Thread-88] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2021-06-17 19:27:05.184  INFO 34776 --- [Thread-88] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2021-06-17 19:27:05.184  INFO 34776 --- [Thread-88] com.zaxxer.hikari.HikariDataSource       : HikariPool-18 - Shutdown initiated...
+2021-06-17 19:27:05.185  INFO 34776 --- [Thread-88] com.zaxxer.hikari.HikariDataSource       : HikariPool-18 - Shutdown completed.
+2021-06-17 19:27:05.263  INFO 34776 --- [restartedMain] c.m.assignment7.Assignment7Application   : Starting Assignment7Application using Java 15.0.2 on LAPTOP-TEB59UJ9 with PID 34776 (C:\Users\moni0\Desktop\SpringToolSuite\FinalProject\Merit-Bank-Capstone-Backend\Assignment7\target\classes started by moni0 in C:\Users\moni0\Desktop\SpringToolSuite\FinalProject\Merit-Bank-Capstone-Backend\Assignment7)
+2021-06-17 19:27:05.263  INFO 34776 --- [restartedMain] c.m.assignment7.Assignment7Application   : No active profile set, falling back to default profiles: default
+2021-06-17 19:27:05.553  INFO 34776 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2021-06-17 19:27:05.596  INFO 34776 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 42 ms. Found 14 JPA repository interfaces.
+2021-06-17 19:27:05.673  INFO 34776 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2021-06-17 19:27:05.673  INFO 34776 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2021-06-17 19:27:05.673  INFO 34776 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.45]
+2021-06-17 19:27:05.694  INFO 34776 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2021-06-17 19:27:05.694  INFO 34776 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 430 ms
+2021-06-17 19:27:05.731  INFO 34776 --- [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2021-06-17 19:27:05.735  INFO 34776 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-19 - Starting...
+2021-06-17 19:27:05.739  INFO 34776 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-19 - Start completed.
+2021-06-17 19:27:05.739  INFO 34776 --- [restartedMain] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.MySQL5Dialect
+2021-06-17 19:27:06.077  INFO 34776 --- [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2021-06-17 19:27:06.078  INFO 34776 --- [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2021-06-17 19:27:06.155  INFO 34776 --- [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2021-06-17 19:27:06.325  WARN 34776 --- [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2021-06-17 19:27:06.447  INFO 34776 --- [restartedMain] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@1b0bc6b0, org.springframework.security.web.context.SecurityContextPersistenceFilter@27fce0f4, org.springframework.security.web.header.HeaderWriterFilter@448786c, org.springframework.web.filter.CorsFilter@63e81b80, org.springframework.security.web.authentication.logout.LogoutFilter@2e632b81, com.meritamerica.assignment7.security.filters.JwtRequestFilter@5896d0e0, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@65498d62, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@220512bf, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@3da0b7b5, org.springframework.security.web.session.SessionManagementFilter@6685529b, org.springframework.security.web.access.ExceptionTranslationFilter@63c43667, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@138fd655]
+2021-06-17 19:27:06.459  INFO 34776 --- [restartedMain] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2021-06-17 19:27:06.504  INFO 34776 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2021-06-17 19:27:07.055  INFO 34776 --- [restartedMain] c.m.assignment7.Assignment7Application   : Started Assignment7Application in 1.814 seconds (JVM running for 9908.02)
