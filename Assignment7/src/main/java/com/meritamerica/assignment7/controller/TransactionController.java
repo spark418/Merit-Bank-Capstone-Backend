@@ -78,9 +78,9 @@ public class TransactionController {
 		SavingsAccount account = accountsService.getSavingsAccount(id, accNum);
 		//double balance = accountsService.getSavingsAccount(id, accNum).getBalance();
 		
-		if(dto.getAmount() < 0) throw new NegativeAmountException();
+		
 		if(account.getBalance() == 0) throw new ZeroAmountException("balance is zero");
-		if(account.getBalance() - dto.getAmount() < 0) throw new ZeroAmountException("Invalid Transaction");
+		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroAmountException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
 		
 		WithdrawTransaction transaction = new WithdrawTransaction(dto.getAmount(), account.getBalance() + dto.getAmount(), 
@@ -123,9 +123,9 @@ public class TransactionController {
 		CheckingAccount account = accountsService.getCheckingAccount(id, accNum);
 		//double balance = accountsService.getSavingsAccount(id, accNum).getBalance();
 		
-		if(dto.getAmount() < 0) throw new NegativeAmountException();
+		
 		if(account.getBalance() == 0) throw new ZeroAmountException("balance is zero");
-		if(account.getBalance() - dto.getAmount() < 0) throw new ZeroAmountException("Invalid Transaction");
+		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroAmountException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
 		
 		WithdrawTransaction transaction = new WithdrawTransaction(dto.getAmount(), account.getBalance() + dto.getAmount(), 
@@ -199,9 +199,9 @@ public class TransactionController {
 		DBACheckingAccount account = accountsService.getDBACheckingAccount(id, accNum);
 		//double balance = accountsService.getSavingsAccount(id, accNum).getBalance();
 		
-		if(dto.getAmount() < 0) throw new NegativeAmountException();
+		
 		if(account.getBalance() == 0) throw new ZeroAmountException("balance is zero");
-		if(account.getBalance() - dto.getAmount() < 0) throw new ZeroAmountException("Invalid Transaction");
+		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroAmountException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
 		
 		
@@ -247,10 +247,9 @@ public class TransactionController {
 		@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException {
 			CDAccount account = accountsService.getCDAccount(id, accNum);
 			//double balance = accountsService.getSavingsAccount(id, accNum).getBalance();
-			
-			if(dto.getAmount() < 0) throw new NegativeAmountException();
+			  
 			if(account.getBalance() == 0) throw new ZeroAmountException("balance is zero");
-			if(account.getBalance() - dto.getAmount() < 0) throw new ZeroAmountException("Invalid Transaction");
+			if(account.getBalance() + dto.getAmount() < 0) throw new ZeroAmountException("Invalid Transaction");
 			if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
 			
 			WithdrawTransaction transaction = new WithdrawTransaction(dto.getAmount(), account.getBalance() + dto.getAmount(), 
@@ -343,9 +342,8 @@ public class TransactionController {
 				RolloverIRAAccount account = accountsService.getRolloverIRAAccount(id, accNum);
 					//double balance = accountsService.getSavingsAccount(id, accNum).getBalance();
 				
-				if(dto.getAmount() < 0) throw new NegativeAmountException();
 				if(account.getBalance() == 0) throw new ZeroAmountException("balance is zero");
-				if(account.getBalance() - dto.getAmount() < 0) throw new ZeroAmountException("Invalid Transaction");
+				if(account.getBalance() + dto.getAmount() < 0) throw new ZeroAmountException("Invalid Transaction");
 				if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
 				
 				WithdrawTransaction transaction = new WithdrawTransaction(dto.getAmount(), account.getBalance() + dto.getAmount(), 
@@ -392,9 +390,8 @@ public class TransactionController {
 				RothIRAAccount account = accountsService.getRothIRAAccount(id, accNum);
 					//double balance = accountsService.getSavingsAccount(id, accNum).getBalance();
 				
-				if(dto.getAmount() < 0) throw new NegativeAmountException();
 				if(account.getBalance() == 0) throw new ZeroAmountException("balance is zero");
-				if(account.getBalance() - dto.getAmount() < 0) throw new ZeroAmountException("Invalid Transaction");
+				if(account.getBalance() + dto.getAmount() < 0) throw new ZeroAmountException("Invalid Transaction");
 				if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
 				
 				WithdrawTransaction transaction = new WithdrawTransaction(dto.getAmount(), account.getBalance() + dto.getAmount(), 
