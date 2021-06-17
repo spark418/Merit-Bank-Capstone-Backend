@@ -28,6 +28,7 @@ import com.meritamerica.assignment7.exceptions.ExceedsCombinedBalanceLimitExcept
 import com.meritamerica.assignment7.exceptions.ExceedsNumberOfAccountsLimitException;
 import com.meritamerica.assignment7.exceptions.NegativeAmountException;
 import com.meritamerica.assignment7.exceptions.NoResourceFoundException;
+import com.meritamerica.assignment7.exceptions.ZeroAmountException;
 import com.meritamerica.assignment7.models.AccountHolder;
 import com.meritamerica.assignment7.models.BankAccount;
 import com.meritamerica.assignment7.models.CDAccount;
@@ -50,6 +51,8 @@ import com.meritamerica.assignment7.security.services.UserServiceImpl;
 import com.meritamerica.assignment7.security.util.JwtUtil;
 import com.meritamerica.assignment7.services.AccountsService;
 import com.meritamerica.assignment7.services.TransactionService;
+
+//import jdk.javadoc.internal.doclets.toolkit.resources.doclets;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -253,32 +256,38 @@ public class UserController {
 	@PostMapping("/Me/savingsaccount/deposittransaction")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
-	public Transaction depositToSavingsAccount(@RequestBody TransactionDTO dto){
+	public Transaction depositToSavingsAccount(@RequestBody TransactionDTO dto)  throws NoResourceFoundException, 
+	NegativeAmountException, ExceedsCombinedBalanceLimitException, ZeroAmountException{
+		
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
 		SavingsAccount account = user.getAccountHolder().getSavingsAccountList().get(0);
 		//account.setBalance(dto.getAmount() + account.getBalance());
+		if(dto.getAmount() < 0) throw new NegativeAmountException();
+		if(dto.getAmount() == 0) throw new ZeroAmountException("amount cannot be zero");
+		
 		
 		DepositTransaction transaction =  new DepositTransaction(dto.getAmount(), 
 		account.getBalance() + dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
 		account.setBalance(account.getBalance() + dto.getAmount());
 		
 		return transactionService.addDepositTransaction(transaction, account);
-		
 	}
 	
 	@PostMapping("/Me/savingsaccount/withdrawtransaction")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
-	public Transaction withdrawToSavingsAccount(@RequestBody TransactionDTO dto){
+	public Transaction withdrawToSavingsAccount(@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException{
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
 		SavingsAccount account = user.getAccountHolder().getSavingsAccountList().get(0);
 		//account.setBalance(dto.getAmount() + account.getBalance());
+		if(dto.getAmount() < 0) throw new NegativeAmountException();
+		if(account.getBalance() == 0) throw new ZeroAmountException("balance is zero");
 		
 		WithdrawTransaction transaction =  new WithdrawTransaction(dto.getAmount(), 
 		account.getBalance() + dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
-		account.setBalance(account.getBalance() + dto.getAmount());
+		account.setBalance(account.getBalance() - dto.getAmount());
 		
 		return transactionService.addWithdrawTransaction(transaction, account);
 		
@@ -617,6 +626,7 @@ public class UserController {
 		return transactionService.addDepositTransaction(transaction, account);
 		
 	}
+	
 	
 	@PostMapping("/Me/RothIRA/withdrawtransaction")
 	@ResponseStatus(HttpStatus.CREATED)

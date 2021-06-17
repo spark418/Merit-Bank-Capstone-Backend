@@ -45,9 +45,10 @@ public class TransactionServiceImpl implements TransactionService {
 	@Override 
 	public WithdrawTransaction addWithdrawTransaction(WithdrawTransaction transaction, BankAccount account) {
 		// TODO Auto-generated method stub
-		withdrawTransactionRepository.save(transaction);
+
 		
 		//account.setBalance(account.getBalance() + transaction.getAmount());
+		withdrawTransactionRepository.save(transaction);
 		account.addWithdrawTransaction(transaction.getAmount(), transaction.getType(), account.getSourceTransactions());
 		return transaction;
 	}

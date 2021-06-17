@@ -46,7 +46,7 @@ public class TransactionController {
 	
 	@PostMapping("/accountholder/{id}/savingsaccounts/{accNum}/deposittransaction")
 	@ResponseStatus(HttpStatus.CREATED)
-	@Secured("ROLE_USER")
+	@Secured("ROLE_ADMIN")
 	public Transaction addDepositransactionToSavingsAccount(@PathVariable int id,@PathVariable long accNum ,
 	@RequestBody TransactionDTO dto) {
 		SavingsAccount account = accountsService.getSavingsAccount(id, accNum);
@@ -58,7 +58,7 @@ public class TransactionController {
 	
 	@GetMapping("/accountholder/{id}/savingsaccounts/{accNum}/transactions")
 	@ResponseStatus(HttpStatus.OK)
-	@Secured("ROLE_USER")
+	@Secured("ROLE_ADMIN")
 	public List <Transaction> getTransactionsFromSavings(@PathVariable int id,@PathVariable long accNum) {
 		SavingsAccount account = accountsService.getSavingsAccount(id, accNum);
 		return transactionService.getTransactions(account);
@@ -66,7 +66,7 @@ public class TransactionController {
 	
 	@PostMapping("/accountholder/{id}/savingsaccounts/{accNum}/withdrawtransaction")
 	@ResponseStatus(HttpStatus.CREATED)
-	@Secured("ROLE_USER")
+	@Secured("ROLE_ADMIN")
 	public Transaction addWithdrawToSavings(@PathVariable int id,@PathVariable long accNum ,
 	@RequestBody TransactionDTO dto) {
 		SavingsAccount account = accountsService.getSavingsAccount(id, accNum);
@@ -81,7 +81,7 @@ public class TransactionController {
 	
 	@PostMapping("/accountholder/{id}/checkingaccounts/{accNum}/deposittransaction")
 	@ResponseStatus(HttpStatus.CREATED)
-	@Secured("ROLE_USER")
+	@Secured("ROLE_ADMIN")
 	public Transaction addDepositransactionToCheckingAccount(@PathVariable int id,@PathVariable long accNum ,
 	@RequestBody TransactionDTO dto) {
 		CheckingAccount account = accountsService.getCheckingAccount(id, accNum);
@@ -93,7 +93,7 @@ public class TransactionController {
 	
 	@GetMapping("/accountholder/{id}/checkingaccounts/{accNum}/transactions")
 	@ResponseStatus(HttpStatus.OK)
-	@Secured("ROLE_USER")
+	@Secured("ROLE_ADMIN")
 	public List <Transaction> getTransactionsFromCheckings(@PathVariable int id,@PathVariable long accNum) {
 		CheckingAccount account = accountsService.getCheckingAccount(id, accNum);
 		return transactionService.getTransactions(account);
@@ -101,7 +101,7 @@ public class TransactionController {
 	
 	@PostMapping("/accountholder/{id}/checkingaccounts/{accNum}/withdrawtransaction")
 	@ResponseStatus(HttpStatus.CREATED)
-	@Secured("ROLE_USER")
+	@Secured("ROLE_ADMIN")
 	public Transaction addWithdrawToChecking(@PathVariable int id,@PathVariable long accNum ,
 	@RequestBody TransactionDTO dto){
 		CheckingAccount account = accountsService.getCheckingAccount(id, accNum);
@@ -116,7 +116,7 @@ public class TransactionController {
 	
 	@PostMapping("/accountholder/{id}/accounts/{sourceNum}/transfer/{targetNum}")
 	@ResponseStatus(HttpStatus.CREATED)
-	@Secured("ROLE_USER")
+	@Secured("ROLE_ADMIN")
 	public Transaction addTransferToAccount(@PathVariable int id, @PathVariable long sourceNum, @PathVariable long targetNum, 
 	@RequestBody TransactionDTO dto) {
 		BankAccount source = accountsService.findAccount(sourceNum, id); 
@@ -142,7 +142,7 @@ public class TransactionController {
 	
 	@PostMapping("/accountholder/{id}/dbaaccounts/{accNum}/deposittransaction")
 	@ResponseStatus(HttpStatus.CREATED)
-	@Secured("ROLE_USER")
+	@Secured("ROLE_ADMIN")
 	public Transaction addDepositransactionToDBAAccount(@PathVariable int id,@PathVariable long accNum ,
 	@RequestBody TransactionDTO dto) {
 		DBACheckingAccount account = accountsService.getDBACheckingAccount(id, accNum);
@@ -154,7 +154,7 @@ public class TransactionController {
 	
 	@GetMapping("/accountholder/{id}/dbaaccounts/{accNum}/transactions")
 	@ResponseStatus(HttpStatus.OK)
-	@Secured("ROLE_USER")
+	@Secured("ROLE_ADMIN")
 	public List <Transaction> getTransactionsFromDBA(@PathVariable int id,@PathVariable long accNum) {
 		DBACheckingAccount account = accountsService.getDBACheckingAccount(id, accNum);
 		return transactionService.getTransactions(account);
@@ -162,7 +162,7 @@ public class TransactionController {
 	
 	@PostMapping("/accountholder/{id}/dbaaccounts/{accNum}/withdrawtransaction")
 	@ResponseStatus(HttpStatus.CREATED)
-	@Secured("ROLE_USER")
+	@Secured("ROLE_ADMIN")
 	public Transaction addWithdrawToDBA(@PathVariable int id,@PathVariable long accNum ,
 	@RequestBody TransactionDTO dto) {
 		DBACheckingAccount account = accountsService.getDBACheckingAccount(id, accNum);
@@ -178,7 +178,7 @@ public class TransactionController {
 	
 		@PostMapping("/accountholder/{id}/cdaccounts/{accNum}/deposittransaction")
 		@ResponseStatus(HttpStatus.CREATED)
-		@Secured("ROLE_USER")
+		@Secured("ROLE_ADMIN")
 		public Transaction addDepositransactionToCDAccount(@PathVariable int id,@PathVariable long accNum ,
 		@RequestBody TransactionDTO dto) {
 			CDAccount account = accountsService.getCDAccount(id, accNum);
@@ -190,7 +190,7 @@ public class TransactionController {
 		
 		@GetMapping("/accountholder/{id}/cdaccounts/{accNum}/transactions")
 		@ResponseStatus(HttpStatus.OK)
-		@Secured("ROLE_USER")
+		@Secured("ROLE_ADMIN")
 		public List <Transaction> getTransactionsFromCDAccount(@PathVariable int id,@PathVariable long accNum) {
 			CDAccount account = accountsService.getCDAccount(id, accNum);
 			return transactionService.getTransactions(account);
@@ -198,7 +198,7 @@ public class TransactionController {
 		
 		@PostMapping("/accountholder/{id}/cdaccounts/{accNum}/withdrawtransaction")
 		@ResponseStatus(HttpStatus.CREATED)
-		@Secured("ROLE_USER")
+		@Secured("ROLE_ADMIN")
 		public Transaction addWithdrawToCDAccount(@PathVariable int id,@PathVariable long accNum ,
 		@RequestBody TransactionDTO dto) {
 			CDAccount account = accountsService.getCDAccount(id, accNum);
@@ -214,7 +214,7 @@ public class TransactionController {
 	
 		@PostMapping("/accountholder/{id}/regularIRA/{accNum}/deposittransaction")
 		@ResponseStatus(HttpStatus.CREATED)
-		@Secured("ROLE_USER")
+		@Secured("ROLE_ADMIN")
 		public Transaction addDepositransactionToRegularIRA(@PathVariable int id,@PathVariable long accNum ,
 		@RequestBody TransactionDTO dto) {
 			
@@ -227,7 +227,7 @@ public class TransactionController {
 			
 			@GetMapping("/accountholder/{id}/regularIRA/{accNum}/transactions")
 			@ResponseStatus(HttpStatus.OK)
-			@Secured("ROLE_USER")
+			@Secured("ROLE_ADMIN")
 			public List <Transaction> getTransactionsFromRegularIRA(@PathVariable int id,@PathVariable long accNum) {
 				RegularIRAAccount account = accountsService.getRegularIRAAccount(id, accNum);
 				return transactionService.getTransactions(account);
@@ -235,7 +235,7 @@ public class TransactionController {
 			
 			@PostMapping("/accountholder/{id}/regularIRA/{accNum}/withdrawtransaction")
 			@ResponseStatus(HttpStatus.CREATED)
-			@Secured("ROLE_USER")
+			@Secured("ROLE_ADMIN")
 			public Transaction addWithdrawToRegularIRA(@PathVariable int id,@PathVariable long accNum ,
   		    @RequestBody TransactionDTO dto) {
 				RegularIRAAccount account = accountsService.getRegularIRAAccount(id, accNum);
@@ -251,7 +251,7 @@ public class TransactionController {
 			
 			@PostMapping("/accountholder/{id}/rolloverIRA/{accNum}/deposittransaction")
 			@ResponseStatus(HttpStatus.CREATED)
-			@Secured("ROLE_USER")
+			@Secured("ROLE_ADMIN")
 			public Transaction addDepositransactionToRolloverIRA(@PathVariable int id,@PathVariable long accNum ,
 			@RequestBody TransactionDTO dto) {
 				
@@ -264,7 +264,7 @@ public class TransactionController {
 				
 				@GetMapping("/accountholder/{id}/rolloverIRA/{accNum}/transactions")
 				@ResponseStatus(HttpStatus.OK)
-				@Secured("ROLE_USER")
+				@Secured("ROLE_ADMIN")
 				public List <Transaction> getTransactionsFromRolloverIRA(@PathVariable int id,@PathVariable long accNum) {
 					RolloverIRAAccount account = accountsService.getRolloverIRAAccount(id, accNum);
 					return transactionService.getTransactions(account);
@@ -272,7 +272,7 @@ public class TransactionController {
 				
 			@PostMapping("/accountholder/{id}/rolloverIRA/{accNum}/withdrawtransaction")
 			@ResponseStatus(HttpStatus.CREATED)
-			@Secured("ROLE_USER")
+			@Secured("ROLE_ADMIN")
 			public Transaction addWithdrawToRolloverIRA(@PathVariable int id,@PathVariable long accNum ,
 	  		@RequestBody TransactionDTO dto) {
 				RolloverIRAAccount account = accountsService.getRolloverIRAAccount(id, accNum);
@@ -288,7 +288,7 @@ public class TransactionController {
 			
 			@PostMapping("/accountholder/{id}/rothIRA/{accNum}/deposittransaction")
 			@ResponseStatus(HttpStatus.CREATED)
-			@Secured("ROLE_USER")
+			@Secured("ROLE_ADMIN")
 			public Transaction addDepositransactionToRothIRA(@PathVariable int id,@PathVariable long accNum ,
 			@RequestBody TransactionDTO dto) {
 				
@@ -301,7 +301,7 @@ public class TransactionController {
 				
 				@GetMapping("/accountholder/{id}/rothIRA/{accNum}/transactions")
 				@ResponseStatus(HttpStatus.OK)
-				@Secured("ROLE_USER")
+				@Secured("ROLE_ADMIN")
 				public List <Transaction> getTransactionsFromRothIRA(@PathVariable int id,@PathVariable long accNum) {
 					RothIRAAccount account = accountsService.getRothIRAAccount(id, accNum);
 					return transactionService.getTransactions(account);
@@ -310,7 +310,7 @@ public class TransactionController {
 		
 			@PostMapping("/accountholder/{id}/rothIRA/{accNum}/withdrawtransaction")
 			@ResponseStatus(HttpStatus.CREATED)
-			@Secured("ROLE_USER")
+			@Secured("ROLE_ADMIN")
 			public Transaction addWithdrawToRothIRA(@PathVariable int id,@PathVariable long accNum ,
 	  		@RequestBody TransactionDTO dto) {
 				RothIRAAccount account = accountsService.getRothIRAAccount(id, accNum);
