@@ -18,7 +18,9 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -101,6 +103,12 @@ class SecurityController {
 	//@ResponseStatus(HttpStatus.CREATED)
 	public User addUser(@RequestBody User user) {
 		return userService.addUser(user);
+	}
+	
+	@PutMapping(value="authenticate/{id}/updateuser")
+	public User updateUser( @RequestBody User user,@PathVariable int id) {
+		
+		return userService.updateUser(user,id);
 	}
 }
 

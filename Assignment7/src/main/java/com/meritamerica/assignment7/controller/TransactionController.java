@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.meritamerica.assignment7.enumerations.TransactionType;
 import com.meritamerica.assignment7.exceptions.NegativeAmountException;
+import com.meritamerica.assignment7.exceptions.NoResourceFoundException;
 import com.meritamerica.assignment7.exceptions.ZeroAmountException;
+import com.meritamerica.assignment7.exceptions.ZeroBalanceException;
 import com.meritamerica.assignment7.models.BankAccount;
 import com.meritamerica.assignment7.models.CDAccount;
 import com.meritamerica.assignment7.models.CheckingAccount;
@@ -65,7 +67,7 @@ public class TransactionController {
 	@GetMapping("/accountholder/{id}/savingsaccounts/{accNum}/transactions")
 	@ResponseStatus(HttpStatus.OK)
 	@Secured("ROLE_ADMIN")
-	public List <Transaction> getTransactionsFromSavings(@PathVariable int id,@PathVariable long accNum) {
+	public List <Transaction> getTransactionsFromSavings(@PathVariable int id,@PathVariable long accNum) throws NoResourceFoundException {
 		SavingsAccount account = accountsService.getSavingsAccount(id, accNum);
 		return transactionService.getTransactions(account);
 	}
@@ -74,14 +76,15 @@ public class TransactionController {
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_ADMIN")
 	public Transaction addWithdrawToSavings(@PathVariable int id,@PathVariable long accNum ,
-	@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException {
+	@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException,ZeroBalanceException {
 		SavingsAccount account = accountsService.getSavingsAccount(id, accNum);
 		//double balance = accountsService.getSavingsAccount(id, accNum).getBalance();
 		
 		
-		if(account.getBalance() == 0) throw new ZeroAmountException("balance is zero");
-		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroAmountException("Invalid Transaction");
+		if(account.getBalance() == 0) throw new ZeroBalanceException("balance is zero");
+		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
+		if(dto.getAmount() < 0) throw new NegativeAmountException();
 		
 		WithdrawTransaction transaction = new WithdrawTransaction(dto.getAmount(), account.getBalance() + dto.getAmount(), 
 	    TransactionType.valueOf(dto.getTransactionType()),  accountsService.getSavingsAccount(id, accNum));
@@ -99,7 +102,7 @@ public class TransactionController {
 		CheckingAccount account = accountsService.getCheckingAccount(id, accNum);
 		
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
-		if(account.getBalance() == 0) throw new ZeroAmountException("balance is zero");
+		if(dto.getAmount() == 0) throw new ZeroAmountException("amount cannot be zero");
 		
 		DepositTransaction transaction =  new DepositTransaction(dto.getAmount(), 
 		account.getBalance() + dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
@@ -127,6 +130,7 @@ public class TransactionController {
 		if(account.getBalance() == 0) throw new ZeroAmountException("balance is zero");
 		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroAmountException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
+		if(dto.getAmount() < 0) throw new NegativeAmountException();
 		
 		WithdrawTransaction transaction = new WithdrawTransaction(dto.getAmount(), account.getBalance() + dto.getAmount(), 
 	    TransactionType.valueOf(dto.getTransactionType()),  accountsService.getCheckingAccount(id, accNum));
@@ -140,12 +144,15 @@ public class TransactionController {
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_ADMIN")
 	public Transaction addTransferToAccount(@PathVariable int id, @PathVariable long sourceNum, @PathVariable long targetNum, 
-	@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException {
+	@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException, ZeroBalanceException {
 		BankAccount source = accountsService.findAccount(sourceNum, id); 
 		BankAccount target = accountsService.findAccount(targetNum, id);
 		
+		if(source.getBalance() == 0) throw new ZeroBalanceException("balance is zero");
+		if(source.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
-		if(source.getBalance() == 0) throw new ZeroAmountException("Invalid Transaction");
+		
 		
 		TransferTransaction sourceTransaction = new TransferTransaction(dto.getAmount(), target.getBalance() + dto.getAmount(), 
 		source.getBalance() + -dto.getAmount(),
@@ -173,7 +180,7 @@ public class TransactionController {
 		DBACheckingAccount account = accountsService.getDBACheckingAccount(id, accNum);
 		
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
-		if(account.getBalance() == 0) throw new ZeroAmountException("balance is zero");
+		if(dto.getAmount() == 0) throw new ZeroAmountException("amount cannot be zero");
 	
 		
 		
@@ -195,14 +202,15 @@ public class TransactionController {
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_ADMIN")
 	public Transaction addWithdrawToDBA(@PathVariable int id,@PathVariable long accNum ,
-	@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException {
+	@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException, ZeroBalanceException {
 		DBACheckingAccount account = accountsService.getDBACheckingAccount(id, accNum);
 		//double balance = accountsService.getSavingsAccount(id, accNum).getBalance();
 		
 		
-		if(account.getBalance() == 0) throw new ZeroAmountException("balance is zero");
-		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroAmountException("Invalid Transaction");
+		if(account.getBalance() == 0) throw new ZeroBalanceException("balance is zero");
+		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
+		if(dto.getAmount() < 0) throw new NegativeAmountException();
 		
 		
 		
@@ -225,8 +233,7 @@ public class TransactionController {
 			account.getBalance() + dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
 			
 			if(dto.getAmount() < 0) throw new NegativeAmountException();
-			if(account.getBalance() == 0) throw new ZeroAmountException("balance is zero");
-			
+			if(dto.getAmount() == 0) throw new ZeroAmountException("amount cannot be zero");
 			
 			account.setBalance(account.getBalance() + dto.getAmount());
 		    return transactionService.addDepositTransaction(transaction, account);
@@ -244,13 +251,14 @@ public class TransactionController {
 		@ResponseStatus(HttpStatus.CREATED)
 		@Secured("ROLE_ADMIN")
 		public Transaction addWithdrawToCDAccount(@PathVariable int id,@PathVariable long accNum ,
-		@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException {
+		@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException, ZeroBalanceException {
 			CDAccount account = accountsService.getCDAccount(id, accNum);
 			//double balance = accountsService.getSavingsAccount(id, accNum).getBalance();
 			  
-			if(account.getBalance() == 0) throw new ZeroAmountException("balance is zero");
-			if(account.getBalance() + dto.getAmount() < 0) throw new ZeroAmountException("Invalid Transaction");
+			if(account.getBalance() == 0) throw new ZeroBalanceException("balance is zero");
+			if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
 			if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
+			if(dto.getAmount() < 0) throw new NegativeAmountException();
 			
 			WithdrawTransaction transaction = new WithdrawTransaction(dto.getAmount(), account.getBalance() + dto.getAmount(), 
 		    TransactionType.valueOf(dto.getTransactionType()),  accountsService.getCDAccount(id, accNum));
@@ -270,7 +278,7 @@ public class TransactionController {
 			RegularIRAAccount account = accountsService.getRegularIRAAccount(id, accNum);
 			
 			if(dto.getAmount() < 0) throw new NegativeAmountException();
-			if(account.getBalance() == 0) throw new ZeroAmountException("balance is zero");
+			if(dto.getAmount() == 0) throw new ZeroAmountException("amount cannot be zero");
 			
 			DepositTransaction transaction =  new DepositTransaction(dto.getAmount(), 
 			account.getBalance() + dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
@@ -290,14 +298,14 @@ public class TransactionController {
 			@ResponseStatus(HttpStatus.CREATED)
 			@Secured("ROLE_ADMIN")
 			public Transaction addWithdrawToRegularIRA(@PathVariable int id,@PathVariable long accNum ,
-  		    @RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException {
+  		    @RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException, ZeroBalanceException {
 				RegularIRAAccount account = accountsService.getRegularIRAAccount(id, accNum);
 				//double balance = accountsService.getSavingsAccount(id, accNum).getBalance();
 				
-				if(dto.getAmount() < 0) throw new NegativeAmountException();
-				if(account.getBalance() == 0) throw new ZeroAmountException("balance is zero");
-				if(account.getBalance() - dto.getAmount() < 0) throw new ZeroAmountException("Invalid Transaction");
+				if(account.getBalance() == 0) throw new ZeroBalanceException("balance is zero");
+				if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
 				if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
+				if(dto.getAmount() < 0) throw new NegativeAmountException();
 				
 				WithdrawTransaction transaction = new WithdrawTransaction(dto.getAmount(), account.getBalance() + dto.getAmount(), 
 			    TransactionType.valueOf(dto.getTransactionType()),  accountsService.getRegularIRAAccount(id, accNum));
@@ -318,7 +326,7 @@ public class TransactionController {
 				
 				
 				if(dto.getAmount() < 0) throw new NegativeAmountException();
-				if(account.getBalance() == 0) throw new ZeroAmountException("balance is zero");
+				if(dto.getAmount() == 0) throw new ZeroAmountException("amount cannot be zero");
 				
 				DepositTransaction transaction =  new DepositTransaction(dto.getAmount(), 
 				account.getBalance() + dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
@@ -338,13 +346,14 @@ public class TransactionController {
 			@ResponseStatus(HttpStatus.CREATED)
 			@Secured("ROLE_ADMIN")
 			public Transaction addWithdrawToRolloverIRA(@PathVariable int id,@PathVariable long accNum ,
-	  		@RequestBody TransactionDTO dto) throws ZeroAmountException, NegativeAmountException {
+	  		@RequestBody TransactionDTO dto) throws ZeroAmountException, NegativeAmountException, ZeroBalanceException {
 				RolloverIRAAccount account = accountsService.getRolloverIRAAccount(id, accNum);
 					//double balance = accountsService.getSavingsAccount(id, accNum).getBalance();
 				
-				if(account.getBalance() == 0) throw new ZeroAmountException("balance is zero");
-				if(account.getBalance() + dto.getAmount() < 0) throw new ZeroAmountException("Invalid Transaction");
+				if(account.getBalance() == 0) throw new ZeroBalanceException("balance is zero");
+				if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
 				if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
+				if(dto.getAmount() < 0) throw new NegativeAmountException();
 				
 				WithdrawTransaction transaction = new WithdrawTransaction(dto.getAmount(), account.getBalance() + dto.getAmount(), 
 				TransactionType.valueOf(dto.getTransactionType()),  accountsService.getRolloverIRAAccount(id, accNum));
@@ -364,7 +373,7 @@ public class TransactionController {
 				RothIRAAccount account = accountsService.getRothIRAAccount(id, accNum);
 				
 				if(dto.getAmount() < 0) throw new NegativeAmountException();
-				if(account.getBalance() == 0) throw new ZeroAmountException("balance is zero");
+				if(dto.getAmount() == 0) throw new ZeroAmountException("amount cannot be zero");
 
 				
 				DepositTransaction transaction =  new DepositTransaction(dto.getAmount(), 
@@ -386,13 +395,14 @@ public class TransactionController {
 			@ResponseStatus(HttpStatus.CREATED)
 			@Secured("ROLE_ADMIN")
 			public Transaction addWithdrawToRothIRA(@PathVariable int id,@PathVariable long accNum ,
-	  		@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException {
+	  		@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException, ZeroBalanceException {
 				RothIRAAccount account = accountsService.getRothIRAAccount(id, accNum);
 					//double balance = accountsService.getSavingsAccount(id, accNum).getBalance();
 				
-				if(account.getBalance() == 0) throw new ZeroAmountException("balance is zero");
-				if(account.getBalance() + dto.getAmount() < 0) throw new ZeroAmountException("Invalid Transaction");
+				if(account.getBalance() == 0) throw new ZeroBalanceException("balance is zero");
+				if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
 				if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
+				if(dto.getAmount() < 0) throw new NegativeAmountException();
 				
 				WithdrawTransaction transaction = new WithdrawTransaction(dto.getAmount(), account.getBalance() + dto.getAmount(), 
 				TransactionType.valueOf(dto.getTransactionType()),  accountsService.getRothIRAAccount(id, accNum));

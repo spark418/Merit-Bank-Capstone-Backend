@@ -133,5 +133,25 @@ public class AccountHolderServiceImpl implements AccountHolderService {
 		}
 		return accountHolder.getRolloverIRAAccountList();
 	}
+	@Override
+	public AccountHoldersContactDetails updateContactDetails(
+			AccountHoldersContactDetails accountHolderContact,int contactsId) throws NoResourceFoundException{
+		AccountHoldersContactDetails currentAccountHoldersContact =  contactDetailsRepository.findById(contactsId).orElse(null);
+		currentAccountHoldersContact.setAddress(accountHolderContact.getAddress());
+		currentAccountHoldersContact.setEmail(accountHolderContact.getEmail());
+		currentAccountHoldersContact.setPhoneNum(accountHolderContact.getPhoneNum());
+		return contactDetailsRepository.save(currentAccountHoldersContact);
+	}
+	
+	@Override
+	public AccountHolder updateAccountHolder(AccountHolder accountHolder, int id) throws NoResourceFoundException{
+		AccountHolder currentAccHolder = accountHolderRepository.findById(id).orElse(null);
+		currentAccHolder.setFirstName(accountHolder.getFirstName());
+		currentAccHolder.setLastName(accountHolder.getLastName());
+		currentAccHolder.setMiddleName(accountHolder.getMiddleName());
+		currentAccHolder.setSsn(accountHolder.getSsn());
+		
+		return accountHolderRepository.save(currentAccHolder);
+	}
 
 }

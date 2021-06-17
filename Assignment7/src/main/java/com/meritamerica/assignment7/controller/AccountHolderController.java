@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -55,6 +56,21 @@ public class AccountHolderController {
 		return null;
 	}
 	
+	@PutMapping(value="/accountholder/{id}/update")
+	@Secured("ROLE_ADMIN")
+	@ResponseStatus(HttpStatus.CREATED)
+	public AccountHolder updateAccountHolder(@RequestBody @Valid AccountHolder accountHolder,@PathVariable int id) throws NoResourceFoundException {
+		try {
+			logs.info("In AccountHolderController.addAccountHolder");
+			return accountHolderService.updateAccountHolder(accountHolder,id);
+		} catch (NoResourceFoundException e) {
+			
+			logs.error(e.getMessage());
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	@GetMapping(value="/accountholders")
 	@Secured("ROLE_ADMIN")
 	public List<AccountHolder> getAccHolders() {
@@ -73,6 +89,13 @@ public class AccountHolderController {
 	@Secured("ROLE_ADMIN")
 	public AccountHoldersContactDetails addContactDetails(@RequestBody @Valid AccountHoldersContactDetails accountHolderContact,@PathVariable int id) throws NoResourceFoundException {
 		return accountHolderService.addContactDetails(id, accountHolderContact);
+	}
+	
+	@PutMapping("/accountholder/{id}/contactdetails/update")
+	@ResponseStatus(HttpStatus.CREATED)
+	@Secured("ROLE_ADMIN")
+	public AccountHoldersContactDetails updateContactDetails(@RequestBody @Valid AccountHoldersContactDetails accountHolderContact,@PathVariable int id) throws NoResourceFoundException {
+		return accountHolderService.updateContactDetails(accountHolderContact,id);
 	}
 	
 	@GetMapping("/accountholder/{id}/checkingaccounts")

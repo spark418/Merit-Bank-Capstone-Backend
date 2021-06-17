@@ -27,4 +27,6 @@ public interface AccountHolderService {
 	public AccountHolder getAccountHolderById(int accountHolderId) throws NoResourceFoundException;
 	public AccountHoldersContactDetails addContactDetails(int accountHolderId, AccountHoldersContactDetails contactDetails) throws NoResourceFoundException;
 	public AccountHoldersContactDetails getContactDetails(int accountHolderId) throws NoResourceFoundException;
+	public AccountHoldersContactDetails updateContactDetails(AccountHoldersContactDetails accountHolderContact,int contactsId)throws NoResourceFoundException;
+	public AccountHolder updateAccountHolder( AccountHolder accountHolder,int id) throws NoResourceFoundException;
 }

@@ -28,4 +28,12 @@ public class UserServiceImpl implements UserService{
 		return userRepository.findByUserName(username).orElse(null);
 	}
 	
+	@Override
+	public User updateUser(User user,int userid) {
+		User currentUser = userRepository.findById(userid).orElse(null);
+		currentUser.setUserName(user.getUserName());
+		currentUser.setPassword(user.getPassword());
+		currentUser.setActive(user.isActive());
+		return userRepository.save(currentUser);
+	}
 }
