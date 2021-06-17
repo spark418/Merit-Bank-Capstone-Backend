@@ -290,9 +290,9 @@ public class UserController {
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 		
 		WithdrawTransaction transaction =  new WithdrawTransaction(dto.getAmount(), 
-		account.getBalance() + dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
+		account.getBalance() -+ dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
 		
-		account.setBalance(account.getBalance() + dto.getAmount());
+		account.setBalance(account.getBalance() -+ dto.getAmount());
 		
 		return transactionService.addWithdrawTransaction(transaction, account);
 		
@@ -365,9 +365,9 @@ public class UserController {
 
 		
 		WithdrawTransaction transaction =  new WithdrawTransaction(dto.getAmount(), 
-		account.getBalance() + dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
+		account.getBalance() -+ dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
 		
-		account.setBalance(account.getBalance() + dto.getAmount());
+		account.setBalance(account.getBalance() -+ dto.getAmount());
 		
 		
 		return transactionService.addWithdrawTransaction(transaction, account);
@@ -437,12 +437,13 @@ public class UserController {
 		if(account.getBalance() == 0) throw new ZeroAmountException("balance is zero");
 		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroAmountException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
+		if(dto.getAmount() < 0) throw new NegativeAmountException();
 
 		
 		WithdrawTransaction transaction =  new WithdrawTransaction(dto.getAmount(), 
-		account.getBalance() + dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
+		account.getBalance() -+ dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
 		
-		account.setBalance(account.getBalance() + dto.getAmount());
+		account.setBalance(account.getBalance() -+ dto.getAmount());
 		
 		
 		return transactionService.addWithdrawTransaction(transaction, account);
@@ -517,9 +518,9 @@ public class UserController {
 
 		
 		WithdrawTransaction transaction =  new WithdrawTransaction(dto.getAmount(), 
-		account.getBalance() + dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
+		account.getBalance() -+ dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
 		
-		account.setBalance(account.getBalance() + dto.getAmount());
+		account.setBalance(account.getBalance() -+ dto.getAmount());
 		
 		
 		return transactionService.addWithdrawTransaction(transaction, account);
@@ -591,9 +592,9 @@ public class UserController {
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 		
 		WithdrawTransaction transaction =  new WithdrawTransaction(dto.getAmount(), 
-		account.getBalance() + dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
+		account.getBalance() -+ dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
 		
-		account.setBalance(account.getBalance() + dto.getAmount());
+		account.setBalance(account.getBalance() -+ dto.getAmount());
 		
 		return transactionService.addWithdrawTransaction(transaction, account);
 		
@@ -668,9 +669,9 @@ public class UserController {
 
 		
 		WithdrawTransaction transaction =  new WithdrawTransaction(dto.getAmount(), 
-		account.getBalance() + dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
+		account.getBalance() -+ dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
 		
-		account.setBalance(account.getBalance() + dto.getAmount());
+		account.setBalance(account.getBalance() -+ dto.getAmount());
 		
 		return transactionService.addWithdrawTransaction(transaction, account);
 		
@@ -748,9 +749,9 @@ public class UserController {
 
 		
 		WithdrawTransaction transaction =  new WithdrawTransaction(dto.getAmount(), 
-		account.getBalance() + dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
+		account.getBalance() -+ dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
 		
-		account.setBalance(account.getBalance() + dto.getAmount());
+		account.setBalance(account.getBalance() -+ dto.getAmount());
 		
 		
 		return transactionService.addWithdrawTransaction(transaction, account);
