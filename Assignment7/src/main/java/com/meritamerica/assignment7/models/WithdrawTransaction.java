@@ -28,6 +28,7 @@ public class WithdrawTransaction extends Transaction {
 		super.setPostedBalance(balance);
 		super.setSourceAccount(account);
 		super.setDate(new Date());
+		super.setSourceAccount(account);
 	}
 	
 	
