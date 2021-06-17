@@ -29,6 +29,7 @@ import com.meritamerica.assignment7.exceptions.ExceedsNumberOfAccountsLimitExcep
 import com.meritamerica.assignment7.exceptions.NegativeAmountException;
 import com.meritamerica.assignment7.exceptions.NoResourceFoundException;
 import com.meritamerica.assignment7.exceptions.ZeroAmountException;
+import com.meritamerica.assignment7.exceptions.ZeroBalanceException;
 import com.meritamerica.assignment7.models.AccountHolder;
 import com.meritamerica.assignment7.models.BankAccount;
 import com.meritamerica.assignment7.models.CDAccount;
@@ -249,7 +250,7 @@ public class UserController {
 		return user.getAccountHolder().getRolloverIRAAccountList();
 		
 	}
-	
+	/*---------------------TRANSACTION END POINTS-----------------------------*/
 	
 	//Saving account transaction endpoints 
 	
@@ -277,16 +278,16 @@ public class UserController {
 	@PostMapping("/Me/savingsaccount/withdrawtransaction")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
-	public Transaction withdrawToSavingsAccount(@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException{
+	public Transaction withdrawToSavingsAccount(@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException, ZeroBalanceException{
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
 		SavingsAccount account = user.getAccountHolder().getSavingsAccountList().get(0);
 		//account.setBalance(dto.getAmount() + account.getBalance());
 		
-		if(account.getBalance() == 0) throw new ZeroAmountException("balance is zero");
-		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroAmountException("Invalid Transaction");
+		if(account.getBalance() == 0) throw new ZeroBalanceException("balance is zero");
+		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Invalid Transaction");
-
+		if(dto.getAmount() < 0) throw new NegativeAmountException();
 		
 		WithdrawTransaction transaction =  new WithdrawTransaction(dto.getAmount(), 
 		account.getBalance() + dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
@@ -351,15 +352,16 @@ public class UserController {
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
 	public Transaction withdrawToCheckingAccount(@RequestBody TransactionDTO dto) throws NegativeAmountException, 
-	ZeroAmountException{
+	ZeroAmountException, ZeroBalanceException{
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
 		CheckingAccount account = user.getAccountHolder().getCheckingAccountList().get(0);
 		//account.setBalance(dto.getAmount() + account.getBalance());
 		
-		if(account.getBalance() == 0) throw new ZeroAmountException("balance is zero");
-		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroAmountException("Invalid Transaction");
-		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
+		if(account.getBalance() == 0) throw new ZeroBalanceException("balance is zero");
+		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(dto.getAmount() == 0) throw new ZeroAmountException("Invalid Transaction");
+		if(dto.getAmount() < 0) throw new NegativeAmountException();
 
 		
 		WithdrawTransaction transaction =  new WithdrawTransaction(dto.getAmount(), 
@@ -376,7 +378,7 @@ public class UserController {
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
 	public Transaction TransferFromChecking(@RequestBody TransactionDTO dto) throws NegativeAmountException, 
-	ZeroAmountException{
+	ZeroAmountException, ZeroBalanceException{
 		
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
@@ -385,8 +387,9 @@ public class UserController {
 		BankAccount target = accountsService.findAccount(dto.getTarget(), dto.getTargetId());
 		
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
-		if(account.getBalance() == 0) throw new ZeroAmountException("InvalidTransaction");
-		if(dto.getAmount() == 0) throw new ZeroAmountException("Transaction is Illegal");
+		if(account.getBalance() == 0) throw new ZeroBalanceException("InvalidTransaction");
+		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
 		
 		
 		TransferTransaction sourceTransaction = new TransferTransaction(dto.getAmount(), target.getBalance() + dto.getAmount(), 
@@ -411,7 +414,8 @@ public class UserController {
 		//account.setBalance(dto.getAmount() + account.getBalance());
 		
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
-		if(dto.getAmount() == 0) throw new ZeroAmountException("Transaction is Illegal");
+		if(dto.getAmount()== 0) throw new ZeroAmountException("amount cannot be zero");
+		
 		
 		DepositTransaction transaction =  new DepositTransaction(dto.getAmount(), 
 		account.getBalance() + dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
@@ -449,7 +453,7 @@ public class UserController {
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
 	public Transaction TransferFromDBA(@RequestBody TransactionDTO dto,  @PathVariable long accountNum) throws NegativeAmountException, 
-	ZeroAmountException{
+	ZeroAmountException, ZeroBalanceException{
 		
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
@@ -458,8 +462,10 @@ public class UserController {
 		BankAccount target = accountsService.findAccount(dto.getTarget(), dto.getTargetId());
 		
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
-		if(account.getBalance() == 0) throw new ZeroAmountException("InvalidTransaction");
-		if(dto.getAmount() == 0) throw new ZeroAmountException("Transaction is Illegal");
+		if(account.getBalance() == 0) throw new ZeroBalanceException("InvalidTransaction");
+		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
+		
 		
 		TransferTransaction sourceTransaction = new TransferTransaction(dto.getAmount(), target.getBalance() + dto.getAmount(), 
 		account.getBalance() + -dto.getAmount(),
@@ -484,7 +490,8 @@ public class UserController {
 		//account.setBalance(dto.getAmount() + account.getBalance());
 		
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
-		if(dto.getAmount() == 0) throw new ZeroAmountException("Transaction is Illegal");
+		if(dto.getAmount()== 0) throw new ZeroAmountException("amount cannot be zero");
+		
 		
 		DepositTransaction transaction =  new DepositTransaction(dto.getAmount(), 
 		account.getBalance() + dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
@@ -497,15 +504,16 @@ public class UserController {
 	@PostMapping("/Me/cdaccount/{accountNum}/withdrawtransaction")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
-	public Transaction withdrawToCDAccount(@RequestBody TransactionDTO dto,  @PathVariable long accountNum) throws NegativeAmountException, ZeroAmountException{
+	public Transaction withdrawToCDAccount(@RequestBody TransactionDTO dto,  @PathVariable long accountNum) throws NegativeAmountException, ZeroAmountException, ZeroBalanceException{
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
 		CDAccount account = accountsService.getCDAccount(user.getAccountHolder().getId(), accountNum);
 		//account.setBalance(dto.getAmount() + account.getBalance());
 		
-		if(account.getBalance() == 0) throw new ZeroAmountException("balance is zero");
-		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroAmountException("Invalid Transaction");
-		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
+		if(account.getBalance() == 0) throw new ZeroBalanceException("balance is zero");
+		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(dto.getAmount() == 0) throw new ZeroAmountException("Invalid Transaction");
+		if(dto.getAmount() < 0) throw new NegativeAmountException();
 
 		
 		WithdrawTransaction transaction =  new WithdrawTransaction(dto.getAmount(), 
@@ -521,7 +529,7 @@ public class UserController {
 	@PostMapping("/Me/cdaccount/{accountNum}/transfer")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
-	public Transaction TransferFromCD(@RequestBody TransactionDTO dto,  @PathVariable long accountNum) throws NegativeAmountException, ZeroAmountException{
+	public Transaction TransferFromCD(@RequestBody TransactionDTO dto,  @PathVariable long accountNum) throws NegativeAmountException, ZeroAmountException, ZeroBalanceException{
 		
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
@@ -530,8 +538,10 @@ public class UserController {
 		BankAccount target = accountsService.findAccount(dto.getTarget(), dto.getTargetId());
 		
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
-		if(account.getBalance() == 0) throw new ZeroAmountException("InvalidTransaction");
-		if(dto.getAmount() == 0) throw new ZeroAmountException("Transaction is Illegal");
+		if(account.getBalance() == 0) throw new ZeroBalanceException("InvalidTransaction");
+		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
+		
 		
 		
 		TransferTransaction sourceTransaction = new TransferTransaction(dto.getAmount(), target.getBalance() + dto.getAmount(), 
@@ -556,7 +566,7 @@ public class UserController {
 		//account.setBalance(dto.getAmount() + account.getBalance());
 		
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
-		if(dto.getAmount() == 0) throw new ZeroAmountException("Transaction is Illegal");
+		if(dto.getAmount()== 0) throw new ZeroAmountException("amount cannot be zero");
 		
 		DepositTransaction transaction =  new DepositTransaction(dto.getAmount(), 
 		account.getBalance() + dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
@@ -569,16 +579,16 @@ public class UserController {
 	@PostMapping("/Me/RegularIRA/withdrawtransaction")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
-	public Transaction withdrawToRegularIRAAccount(@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException{
+	public Transaction withdrawToRegularIRAAccount(@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException, ZeroBalanceException{
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
 		RegularIRAAccount account = user.getAccountHolder().getRegularIRAAccountList().get(0);
 		//account.setBalance(dto.getAmount() + account.getBalance());
 		
-		if(account.getBalance() == 0) throw new ZeroAmountException("balance is zero");
-		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroAmountException("Invalid Transaction");
-		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
-
+		if(account.getBalance() == 0) throw new ZeroBalanceException("balance is zero");
+		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(dto.getAmount() == 0) throw new ZeroAmountException("Invalid Transaction");
+		if(dto.getAmount() < 0) throw new NegativeAmountException();
 		
 		WithdrawTransaction transaction =  new WithdrawTransaction(dto.getAmount(), 
 		account.getBalance() + dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
@@ -594,7 +604,7 @@ public class UserController {
 	@PostMapping("/Me/RegularIRA/transfer")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
-	public Transaction TransferFromRegularIRA(@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException{
+	public Transaction TransferFromRegularIRA(@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException, ZeroBalanceException{
 		
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
@@ -603,8 +613,10 @@ public class UserController {
 		BankAccount target = accountsService.findAccount(dto.getTarget(), dto.getTargetId());
 		
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
-		if(account.getBalance() == 0) throw new ZeroAmountException("InvalidTransaction");
-		if(dto.getAmount() == 0) throw new ZeroAmountException("Transaction is Illegal");
+		if(account.getBalance() == 0) throw new ZeroBalanceException("InvalidTransaction");
+		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
+		
 		
 		TransferTransaction sourceTransaction = new TransferTransaction(dto.getAmount(), target.getBalance() + dto.getAmount(), 
 		account.getBalance() + -dto.getAmount(),
@@ -628,7 +640,8 @@ public class UserController {
 		//account.setBalance(dto.getAmount() + account.getBalance());
 		
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
-		if(dto.getAmount() == 0) throw new ZeroAmountException("Transaction is Illegal");
+		if(dto.getAmount()== 0) throw new ZeroAmountException("amount cannot be zero");
+		
 		
 		DepositTransaction transaction =  new DepositTransaction(dto.getAmount(), 
 		account.getBalance() + dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
@@ -642,15 +655,16 @@ public class UserController {
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
 	public Transaction withdrawToRolloverIRAAccount(@RequestBody TransactionDTO dto) throws NegativeAmountException, 
-	ZeroAmountException{
+	ZeroAmountException, ZeroBalanceException{
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
 		RolloverIRAAccount account = user.getAccountHolder().getRolloverIRAAccountList().get(0);
 		//account.setBalance(dto.getAmount() + account.getBalance());
 		
-		if(account.getBalance() == 0) throw new ZeroAmountException("balance is zero");
-		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroAmountException("Invalid Transaction");
-		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
+		if(account.getBalance() == 0) throw new ZeroBalanceException("balance is zero");
+		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(dto.getAmount() == 0) throw new ZeroAmountException("Invalid Transaction");
+		if(dto.getAmount() < 0) throw new NegativeAmountException();
 
 		
 		WithdrawTransaction transaction =  new WithdrawTransaction(dto.getAmount(), 
@@ -667,7 +681,7 @@ public class UserController {
 	@PostMapping("/Me/RolloverIRA/transfer")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
-	public Transaction TransferFromRolloverIRA(@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException{
+	public Transaction TransferFromRolloverIRA(@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException, ZeroBalanceException{
 		
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
@@ -676,8 +690,10 @@ public class UserController {
 		BankAccount target = accountsService.findAccount(dto.getTarget(), dto.getTargetId());
 		
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
-		if(account.getBalance() == 0) throw new ZeroAmountException("InvalidTransaction");
-		if(dto.getAmount() == 0) throw new ZeroAmountException("Transaction is Illegal");
+		if(account.getBalance() == 0) throw new ZeroBalanceException("InvalidTransaction");
+		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
+		
 		
 		TransferTransaction sourceTransaction = new TransferTransaction(dto.getAmount(), target.getBalance() + dto.getAmount(), 
 		account.getBalance() + -dto.getAmount(),
@@ -703,7 +719,8 @@ public class UserController {
 		//account.setBalance(dto.getAmount() + account.getBalance());
 		
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
-		if(dto.getAmount() == 0) throw new ZeroAmountException("Transaction is Illegal");
+		if(dto.getAmount()== 0) throw new ZeroAmountException("amount cannot be zero");
+		
 		
 		
 		DepositTransaction transaction =  new DepositTransaction(dto.getAmount(), 
@@ -718,15 +735,16 @@ public class UserController {
 	@PostMapping("/Me/RothIRA/withdrawtransaction")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
-	public Transaction withdrawToRothIRAAccount(@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException{
+	public Transaction withdrawToRothIRAAccount(@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException, ZeroBalanceException{
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
 		RothIRAAccount account = user.getAccountHolder().getRothIRAAccountList().get(0);
 		//account.setBalance(dto.getAmount() + account.getBalance());
 		
-		if(account.getBalance() == 0) throw new ZeroAmountException("balance is zero");
-		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroAmountException("Invalid Transaction");
-		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
+		if(account.getBalance() == 0) throw new ZeroBalanceException("balance is zero");
+		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(dto.getAmount() == 0) throw new ZeroAmountException("Invalid Transaction");
+		if(dto.getAmount() < 0) throw new NegativeAmountException();
 
 		
 		WithdrawTransaction transaction =  new WithdrawTransaction(dto.getAmount(), 
@@ -744,7 +762,7 @@ public class UserController {
 	@PostMapping("/Me/RothIRA/transfer")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
-	public Transaction TransferFromRothIRA(@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException{
+	public Transaction TransferFromRothIRA(@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException, ZeroBalanceException{
 		
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
@@ -753,8 +771,9 @@ public class UserController {
 		BankAccount target = accountsService.findAccount(dto.getTarget(), dto.getTargetId());
 		
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
-		if(account.getBalance() == 0) throw new ZeroAmountException("InvalidTransaction");
-		if(dto.getAmount() == 0) throw new ZeroAmountException("Transaction is Illegal");
+		if(account.getBalance() == 0) throw new ZeroBalanceException("InvalidTransaction");
+		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
 		
 		TransferTransaction sourceTransaction = new TransferTransaction(dto.getAmount(), target.getBalance() + dto.getAmount(), 
 		account.getBalance() + -dto.getAmount(),

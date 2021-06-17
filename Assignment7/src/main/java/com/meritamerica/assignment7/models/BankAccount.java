@@ -12,13 +12,15 @@ import com.meritamerica.assignment7.enumerations.TransactionType;
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class BankAccount {
-
+	
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private  long accountNumber;
 	private  double balance;
 	private  double interestRate;
 	private  LocalDateTime openingDate;
+	private boolean isOpen;
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "sourceAccount")
 	private List <Transaction> sourceTransactions = new ArrayList<>();
@@ -74,6 +76,7 @@ public abstract class BankAccount {
 	public void setTargetTransactions(List<Transaction> targetTransactions) {
 		this.targetTransactions = targetTransactions;
 	}
+	
 	public Transaction addDepositTransaction(double amount, TransactionType type, List<Transaction> transactions) {
 		//this.setBalance(this.getBalance() + amount);
 	    transactions.add(new DepositTransaction(amount, getBalance(), type, this));
