@@ -285,7 +285,7 @@ public class UserController {
 		//account.setBalance(dto.getAmount() + account.getBalance());
 		
 		if(account.getBalance() == 0) throw new ZeroBalanceException("balance is zero");
-		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(account.getBalance() < dto.getAmount()) throw new ZeroBalanceException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Invalid Transaction");
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 		
@@ -303,7 +303,7 @@ public class UserController {
 	@PostMapping("/Me/savingsaccount/transfer")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
-	public Transaction TransferFromSavings(@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException{
+	public Transaction TransferFromSavings(@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException, ZeroBalanceException{
 		
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
@@ -311,8 +311,10 @@ public class UserController {
 		
 		BankAccount target = accountsService.findAccount(dto.getTarget(), dto.getTargetId());
 		
+		if(account.getBalance() == 0) throw new ZeroBalanceException("balance is zero");
+		if(account.getBalance() < dto.getAmount()) throw new ZeroBalanceException("Invalid Transaction");
+		if(dto.getAmount() == 0) throw new ZeroAmountException("Invalid Transaction");
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
-		if(account.getBalance() == 0) throw new ZeroAmountException("Invalid Transaction");
 		
 		TransferTransaction sourceTransaction = new TransferTransaction(dto.getAmount(), target.getBalance() + dto.getAmount(), 
 		account.getBalance() + -dto.getAmount(),
@@ -359,7 +361,7 @@ public class UserController {
 		//account.setBalance(dto.getAmount() + account.getBalance());
 		
 		if(account.getBalance() == 0) throw new ZeroBalanceException("balance is zero");
-		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(account.getBalance() <dto.getAmount() ) throw new ZeroBalanceException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Invalid Transaction");
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 
@@ -388,7 +390,7 @@ public class UserController {
 		
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 		if(account.getBalance() == 0) throw new ZeroBalanceException("InvalidTransaction");
-		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(account.getBalance() < dto.getAmount()) throw new ZeroBalanceException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
 		
 		
@@ -435,7 +437,7 @@ public class UserController {
 		DBACheckingAccount account = accountsService.getDBACheckingAccount(user.getAccountHolder().getId(), accountNum);
 		//account.setBalance(dto.getAmount() + account.getBalance());
 		if(account.getBalance() == 0) throw new ZeroAmountException("balance is zero");
-		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroAmountException("Invalid Transaction");
+		if(account.getBalance() < dto.getAmount() ) throw new ZeroAmountException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 
@@ -464,7 +466,7 @@ public class UserController {
 		
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 		if(account.getBalance() == 0) throw new ZeroBalanceException("InvalidTransaction");
-		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(account.getBalance() < dto.getAmount() ) throw new ZeroBalanceException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
 		
 		
@@ -512,7 +514,7 @@ public class UserController {
 		//account.setBalance(dto.getAmount() + account.getBalance());
 		
 		if(account.getBalance() == 0) throw new ZeroBalanceException("balance is zero");
-		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(account.getBalance() < dto.getAmount() ) throw new ZeroBalanceException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Invalid Transaction");
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 
@@ -540,7 +542,7 @@ public class UserController {
 		
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 		if(account.getBalance() == 0) throw new ZeroBalanceException("InvalidTransaction");
-		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(account.getBalance() < dto.getAmount() ) throw new ZeroBalanceException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
 		
 		
@@ -587,7 +589,7 @@ public class UserController {
 		//account.setBalance(dto.getAmount() + account.getBalance());
 		
 		if(account.getBalance() == 0) throw new ZeroBalanceException("balance is zero");
-		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(account.getBalance() < dto.getAmount() ) throw new ZeroBalanceException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Invalid Transaction");
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 		
@@ -615,7 +617,7 @@ public class UserController {
 		
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 		if(account.getBalance() == 0) throw new ZeroBalanceException("InvalidTransaction");
-		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(account.getBalance() < dto.getAmount() ) throw new ZeroBalanceException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
 		
 		
@@ -663,7 +665,7 @@ public class UserController {
 		//account.setBalance(dto.getAmount() + account.getBalance());
 		
 		if(account.getBalance() == 0) throw new ZeroBalanceException("balance is zero");
-		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(account.getBalance() < dto.getAmount()) throw new ZeroBalanceException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Invalid Transaction");
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 
@@ -692,7 +694,7 @@ public class UserController {
 		
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 		if(account.getBalance() == 0) throw new ZeroBalanceException("InvalidTransaction");
-		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(account.getBalance() < dto.getAmount() ) throw new ZeroBalanceException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
 		
 		
@@ -743,7 +745,7 @@ public class UserController {
 		//account.setBalance(dto.getAmount() + account.getBalance());
 		
 		if(account.getBalance() == 0) throw new ZeroBalanceException("balance is zero");
-		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(account.getBalance() < dto.getAmount() ) throw new ZeroBalanceException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Invalid Transaction");
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 
@@ -773,7 +775,7 @@ public class UserController {
 		
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 		if(account.getBalance() == 0) throw new ZeroBalanceException("InvalidTransaction");
-		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(account.getBalance() < dto.getAmount() ) throw new ZeroBalanceException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
 		
 		TransferTransaction sourceTransaction = new TransferTransaction(dto.getAmount(), target.getBalance() + dto.getAmount(), 
