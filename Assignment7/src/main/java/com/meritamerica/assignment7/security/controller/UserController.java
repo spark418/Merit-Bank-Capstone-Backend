@@ -275,6 +275,7 @@ public class UserController {
 		return transactionService.addDepositTransaction(transaction, account);
 	}
 	
+	
 	@PostMapping("/Me/savingsaccount/withdrawtransaction")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
@@ -284,9 +285,9 @@ public class UserController {
 		SavingsAccount account = user.getAccountHolder().getSavingsAccountList().get(0);
 		//account.setBalance(dto.getAmount() + account.getBalance());
 		
-		if(account.getBalance() == 0) throw new ZeroAmountException("balance is zero");
-		if(account.getBalance() < dto.getAmount() ) throw new ZeroBalanceException("Invalid Transaction");
-		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
+		if(account.getBalance() == 0) throw new ZeroBalanceException("balance is zero");
+		if(account.getBalance() < dto.getAmount()) throw new ZeroBalanceException("Invalid Transaction");
+		if(dto.getAmount() == 0) throw new ZeroAmountException("Invalid Transaction");
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 		
 		
@@ -304,7 +305,7 @@ public class UserController {
 	@PostMapping("/Me/savingsaccount/transfer")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
-	public Transaction TransferFromSavings(@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException{
+	public Transaction TransferFromSavings(@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException, ZeroBalanceException{
 		
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
@@ -312,8 +313,10 @@ public class UserController {
 		
 		BankAccount target = accountsService.findAccount(dto.getTarget(), dto.getTargetId());
 		
+		if(account.getBalance() == 0) throw new ZeroBalanceException("balance is zero");
+		if(account.getBalance() < dto.getAmount()) throw new ZeroBalanceException("Invalid Transaction");
+		if(dto.getAmount() == 0) throw new ZeroAmountException("Invalid Transaction");
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
-		if(account.getBalance() == 0) throw new ZeroAmountException("Invalid Transaction");
 		
 		TransferTransaction sourceTransaction = new TransferTransaction(dto.getAmount(), target.getBalance() + dto.getAmount(), 
 		account.getBalance() + -dto.getAmount(),
@@ -324,6 +327,21 @@ public class UserController {
 		
 		return transactionService.addTransferTransaction(sourceTransaction, account, target);
 	}
+	
+	
+	@GetMapping("/Me/savingsaccount/transactions")
+	@Secured("ROLE_USER")
+	public List<Transaction> getSavingsTransactions() throws NoResourceFoundException{
+		String username = jwtTokenUtil.getCurrentUserName();
+		User user = userService.getUserByUserName(username);
+		 SavingsAccount account = null;
+		if(user.getAccountHolder().getSavingsAccountList().size() == 0) 
+			throw new NoResourceFoundException("Account is Null");
+		else
+			account = user.getAccountHolder().getSavingsAccountList().get(0);
+		    return account.getAllTransactions();
+	}
+	
 	
 	//checking account transaction endpoints
 	
@@ -360,7 +378,7 @@ public class UserController {
 		//account.setBalance(dto.getAmount() + account.getBalance());
 		
 		if(account.getBalance() == 0) throw new ZeroBalanceException("balance is zero");
-		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(account.getBalance() <dto.getAmount() ) throw new ZeroBalanceException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Invalid Transaction");
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 
@@ -389,7 +407,7 @@ public class UserController {
 		
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 		if(account.getBalance() == 0) throw new ZeroBalanceException("InvalidTransaction");
-		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(account.getBalance() < dto.getAmount()) throw new ZeroBalanceException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
 		
 		
@@ -401,6 +419,20 @@ public class UserController {
 		target.setBalance(target.getBalance() + dto.getAmount());
 		return transactionService.addTransferTransaction(sourceTransaction, account, target);
 	}
+	
+	@GetMapping("/Me/checkingaccount/transactions")
+	@Secured("ROLE_USER")
+	public List<Transaction> getCheckingTransactions() throws NoResourceFoundException{
+		String username = jwtTokenUtil.getCurrentUserName();
+		User user = userService.getUserByUserName(username);
+		 CheckingAccount account = null;
+		if(user.getAccountHolder().getCheckingAccountList().size() == 0) 
+			throw new NoResourceFoundException("Account is Null");
+		else
+			account = user.getAccountHolder().getCheckingAccountList().get(0);
+		    return account.getAllTransactions();
+	}
+	
 
 	
 	//dba account endpoints
@@ -436,7 +468,7 @@ public class UserController {
 		DBACheckingAccount account = accountsService.getDBACheckingAccount(user.getAccountHolder().getId(), accountNum);
 		//account.setBalance(dto.getAmount() + account.getBalance());
 		if(account.getBalance() == 0) throw new ZeroAmountException("balance is zero");
-		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroAmountException("Invalid Transaction");
+		if(account.getBalance() < dto.getAmount() ) throw new ZeroAmountException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 
@@ -465,7 +497,7 @@ public class UserController {
 		
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 		if(account.getBalance() == 0) throw new ZeroBalanceException("InvalidTransaction");
-		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(account.getBalance() < dto.getAmount() ) throw new ZeroBalanceException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
 		
 		
@@ -479,6 +511,26 @@ public class UserController {
 	}
 	
 	
+	@GetMapping("/Me/dbaaccount/{accountNum}/transactions")
+	@Secured("ROLE_USER")
+	public List<Transaction> getDBATransactions(@PathVariable long accountNum) throws NoResourceFoundException{
+		String username = jwtTokenUtil.getCurrentUserName();
+		User user = userService.getUserByUserName(username);
+		DBACheckingAccount account = null;
+		if(user.getAccountHolder().getDbaCheckingAccountList().size() == 0) 
+			throw new NoResourceFoundException("Vacant DBA Accounts");
+		else
+			account = user.getAccountHolder().getDbaCheckingAccountList().get(0);
+	    account = accountsService.getDBACheckingAccount(user.getAccountHolder().getId(), accountNum);
+	    
+	    if(account == null) throw new NoResourceFoundException("Invalid Account Number");
+	    
+	    return account.getAllTransactions();
+	}
+	
+
+	
+
 	//cd accounts transaction endpoints
 	
 	@PostMapping("/Me/cdaccount/{accountNum}/deposittransaction")
@@ -513,7 +565,7 @@ public class UserController {
 		//account.setBalance(dto.getAmount() + account.getBalance());
 		
 		if(account.getBalance() == 0) throw new ZeroBalanceException("balance is zero");
-		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(account.getBalance() < dto.getAmount() ) throw new ZeroBalanceException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Invalid Transaction");
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 
@@ -541,7 +593,7 @@ public class UserController {
 		
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 		if(account.getBalance() == 0) throw new ZeroBalanceException("InvalidTransaction");
-		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(account.getBalance() < dto.getAmount() ) throw new ZeroBalanceException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
 		
 		
@@ -554,6 +606,27 @@ public class UserController {
 		target.setBalance(target.getBalance() + dto.getAmount());
 		return transactionService.addTransferTransaction(sourceTransaction, account, target);
 	}
+	
+	
+	@GetMapping("/Me/cdaccount/{accountNum}/transactions")
+	@Secured("ROLE_USER")
+	public List<Transaction> getCDTransactions(@PathVariable long accountNum) throws NoResourceFoundException{
+		String username = jwtTokenUtil.getCurrentUserName();
+		User user = userService.getUserByUserName(username);
+		CDAccount account = null;
+		if(user.getAccountHolder().getCdAccList().size() == 0) 
+			throw new NoResourceFoundException("Vacant CD Accounts");
+		else
+			account = user.getAccountHolder().getCdAccList().get(0);
+	    account = accountsService.getCDAccount(user.getAccountHolder().getId(), accountNum);
+	    
+	    if(account == null) throw new NoResourceFoundException("Invalid Account Number");
+	    return account.getAllTransactions();
+	}
+	
+
+	
+
 	
 	//Regular IRA Account Transactions endpoints
 	
@@ -588,7 +661,7 @@ public class UserController {
 		//account.setBalance(dto.getAmount() + account.getBalance());
 		
 		if(account.getBalance() == 0) throw new ZeroBalanceException("balance is zero");
-		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(account.getBalance() < dto.getAmount() ) throw new ZeroBalanceException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Invalid Transaction");
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 		
@@ -616,7 +689,7 @@ public class UserController {
 		
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 		if(account.getBalance() == 0) throw new ZeroBalanceException("InvalidTransaction");
-		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(account.getBalance() < dto.getAmount() ) throw new ZeroBalanceException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
 		
 		
@@ -629,6 +702,22 @@ public class UserController {
 		
 		return transactionService.addTransferTransaction(sourceTransaction, account, target);
 	}
+	
+	
+	
+	@GetMapping("/Me/RegularIRA/transactions")
+	@Secured("ROLE_USER")
+	public List<Transaction> getRegularTransactions() throws NoResourceFoundException{
+		String username = jwtTokenUtil.getCurrentUserName();
+		User user = userService.getUserByUserName(username);
+		 RegularIRAAccount account = null;
+		if(user.getAccountHolder().getCheckingAccountList().size() == 0) 
+			throw new NoResourceFoundException("Account is Null");
+		else
+			account = user.getAccountHolder().getRegularIRAAccountList().get(0);
+		    return account.getAllTransactions();
+	}
+	
 	
 	//Rollover IRA Account Transactions endpoints
 	
@@ -664,7 +753,7 @@ public class UserController {
 		//account.setBalance(dto.getAmount() + account.getBalance());
 		
 		if(account.getBalance() == 0) throw new ZeroBalanceException("balance is zero");
-		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(account.getBalance() < dto.getAmount()) throw new ZeroBalanceException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Invalid Transaction");
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 
@@ -693,7 +782,7 @@ public class UserController {
 		
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 		if(account.getBalance() == 0) throw new ZeroBalanceException("InvalidTransaction");
-		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(account.getBalance() < dto.getAmount() ) throw new ZeroBalanceException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
 		
 		
@@ -706,6 +795,21 @@ public class UserController {
 		
 		return transactionService.addTransferTransaction(sourceTransaction, account, target);
 	}
+	
+	
+	@GetMapping("/Me/RolloverIRA/transactions")
+	@Secured("ROLE_USER")
+	public List<Transaction> getRolloverTransactions() throws NoResourceFoundException{
+		String username = jwtTokenUtil.getCurrentUserName();
+		User user = userService.getUserByUserName(username);
+		 RolloverIRAAccount account = null;
+		if(user.getAccountHolder().getCheckingAccountList().size() == 0) 
+			throw new NoResourceFoundException("Account is Null");
+		else
+			account = user.getAccountHolder().getRolloverIRAAccountList().get(0);
+		    return account.getAllTransactions();
+	}
+	
 	
 	
 	//Roth IRA Account Transactions endpoints
@@ -744,7 +848,7 @@ public class UserController {
 		//account.setBalance(dto.getAmount() + account.getBalance());
 		
 		if(account.getBalance() == 0) throw new ZeroBalanceException("balance is zero");
-		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(account.getBalance() < dto.getAmount() ) throw new ZeroBalanceException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Invalid Transaction");
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 
@@ -774,7 +878,7 @@ public class UserController {
 		
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 		if(account.getBalance() == 0) throw new ZeroBalanceException("InvalidTransaction");
-		if(account.getBalance() + dto.getAmount() < 0) throw new ZeroBalanceException("Invalid Transaction");
+		if(account.getBalance() < dto.getAmount() ) throw new ZeroBalanceException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
 		
 		TransferTransaction sourceTransaction = new TransferTransaction(dto.getAmount(), target.getBalance() + dto.getAmount(), 
@@ -786,6 +890,21 @@ public class UserController {
 		
 		return transactionService.addTransferTransaction(sourceTransaction, account, target);
 	}
+	
+	
+	@GetMapping("/Me/RothIRA/transactions")
+	@Secured("ROLE_USER")
+	public List<Transaction> getRothIRATransactions() throws NoResourceFoundException{
+		String username = jwtTokenUtil.getCurrentUserName();
+		User user = userService.getUserByUserName(username);
+		 RothIRAAccount account = null;
+		if(user.getAccountHolder().getCheckingAccountList().size() == 0) 
+			throw new NoResourceFoundException("Account is Null");
+		else
+			account = user.getAccountHolder().getRothIRAAccountList().get(0);
+		    return account.getAllTransactions();
+	}
+	
 	
 }
 
