@@ -29,7 +29,7 @@ public class SavingsAccount extends BankAccount {
     private AccountHolder accountHolder;
 	
 	public SavingsAccount() {
-		
+		super.setOpen(true);
 	}
 	public SavingsAccount(double balance) {
 		super(balance, SAVINGS_INTERESTRATE);

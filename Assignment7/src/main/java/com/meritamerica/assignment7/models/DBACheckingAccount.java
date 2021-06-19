@@ -23,7 +23,7 @@ public class DBACheckingAccount extends BankAccount {
 	private AccountHolder accountHolder;
 	
 	public DBACheckingAccount() {
-		
+		super.setOpen(true);
 	}
 	public DBACheckingAccount(double balance) {
 		super(balance,DBA_CHECKING_INTERESTRATE);

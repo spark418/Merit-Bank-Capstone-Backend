@@ -17,6 +17,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.meritamerica.assignment7.enumerations.TransactionAction;
 import com.meritamerica.assignment7.enumerations.TransactionType;
 import com.meritamerica.assignment7.exceptions.NegativeAmountException;
 

@@ -22,7 +22,7 @@ public class CheckingAccount extends BankAccount {
     private AccountHolder accountHolder;
 	
 	public CheckingAccount() {
-		
+		super.setOpen(true);
 	}
 	public CheckingAccount(double balance) {
 		super(balance,CHECKING_INTERESTRATE);

@@ -36,6 +36,7 @@ public class CDAccount extends BankAccount {
 	
 	public CDAccount(CDOffering cdOffering,  double balance) {
 		super( balance,cdOffering.getInterestRate());
+		super.setOpen(true);
 		this.cdOffering=cdOffering;
 	}
 

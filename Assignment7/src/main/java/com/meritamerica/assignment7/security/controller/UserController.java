@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.meritamerica.assignment7.enumerations.TransactionType;
+import com.meritamerica.assignment7.exceptions.AccountIsClosedException;
 import com.meritamerica.assignment7.exceptions.ExceedsCombinedBalanceLimitException;
 import com.meritamerica.assignment7.exceptions.ExceedsNumberOfAccountsLimitException;
 import com.meritamerica.assignment7.exceptions.NegativeAmountException;
@@ -51,6 +52,7 @@ import com.meritamerica.assignment7.security.services.UserService;
 import com.meritamerica.assignment7.security.services.UserServiceImpl;
 import com.meritamerica.assignment7.security.util.JwtUtil;
 import com.meritamerica.assignment7.services.AccountsService;
+import com.meritamerica.assignment7.services.ClosingAccountService;
 import com.meritamerica.assignment7.services.TransactionService;
 
 //import jdk.javadoc.internal.doclets.toolkit.resources.doclets;
@@ -70,6 +72,18 @@ public class UserController {
 	
 	@Autowired 
 	private TransactionService transactionService;
+	
+	@Autowired
+	private ClosingAccountService closingAccountService;
+	
+	
+	
+	public String closeCheckingAccount() throws NoResourceFoundException {
+		String username = jwtTokenUtil.getCurrentUserName();
+		User user = userService.getUserByUserName(username);
+		
+		return closingAccountService.closeCheckingAccount(user.getAccountHolder().getId(), user.getAccountHolder().getCheckingAccountList().get(0).getAccountNumber());
+	}
 
 	@GetMapping("/Me")
 	@Secured("ROLE_USER")
@@ -101,9 +115,10 @@ public class UserController {
 	
 	@GetMapping("/Me/checkingaccounts")
 	@Secured("ROLE_USER")
-	public List<CheckingAccount> getCheckingAccount(){
+	public List<CheckingAccount> getCheckingAccount() throws AccountIsClosedException{
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
+		if(!user.getAccountHolder().getCheckingAccountList().get(0).isOpen()) throw new AccountIsClosedException("Account is Closed");
 		return user.getAccountHolder().getCheckingAccountList();
 	}
 	
@@ -904,6 +919,9 @@ public class UserController {
 			account = user.getAccountHolder().getRothIRAAccountList().get(0);
 		    return account.getAllTransactions();
 	}
+	
+	
+	
 	
 	
 }

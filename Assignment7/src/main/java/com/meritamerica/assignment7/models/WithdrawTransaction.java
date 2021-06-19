@@ -7,7 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-
+import com.meritamerica.assignment7.enumerations.TransactionAction;
 import com.meritamerica.assignment7.enumerations.TransactionType;
 import com.meritamerica.assignment7.exceptions.NegativeAmountException;
 
@@ -17,6 +17,7 @@ public class WithdrawTransaction extends Transaction {
 	 @Id
      @GeneratedValue(strategy = GenerationType.AUTO)
 	 private int id;
+	 private TransactionAction action;
 		
 	public WithdrawTransaction() {
 	      super();	
@@ -29,11 +30,20 @@ public class WithdrawTransaction extends Transaction {
 		super.setSourceAccount(account);
 		super.setDate(new Date());
 		super.setSourceAccount(account);
+		this.setAction(TransactionAction.Withdraw);
 	}
 	
 	
 	
     
+	public TransactionAction getAction() {
+		return action;
+	}
+
+	public void setAction(TransactionAction action) {
+		this.action = action;
+	}
+
 	@Override
 	public void process() throws NegativeAmountException{
 		

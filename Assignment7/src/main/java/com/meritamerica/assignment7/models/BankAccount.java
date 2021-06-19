@@ -39,6 +39,14 @@ public abstract class BankAccount {
 		this.openingDate = LocalDateTime.now();
 	}
 	
+	
+	public boolean isOpen() {
+		return isOpen;
+	}
+	public void setOpen(boolean isOpen) {
+		this.isOpen = isOpen;
+		
+	}
 	public double getBalance() {
 		return balance;
 	}

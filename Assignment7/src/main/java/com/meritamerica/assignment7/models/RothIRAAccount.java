@@ -23,7 +23,7 @@ public class RothIRAAccount extends BankAccount{
 	private AccountHolder accountHolder;
 	
 	public RothIRAAccount() {
-		
+		super.setOpen(true);
 	}
 	public RothIRAAccount(double balance) {
 		super(balance,ROTH_IRA_INTERESTRATE);

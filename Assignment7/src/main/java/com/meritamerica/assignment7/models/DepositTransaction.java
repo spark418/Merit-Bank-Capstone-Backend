@@ -10,11 +10,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import com.meritamerica.assignment7.exceptions.NegativeAmountException;
+import com.meritamerica.assignment7.enumerations.TransactionAction;
 import com.meritamerica.assignment7.enumerations.TransactionType;
 
 
 @Entity(name = "DepositTransaction")
 public class DepositTransaction extends Transaction{
+	
+	private TransactionAction action;
 	
     public DepositTransaction() {
       super();	
@@ -26,6 +29,15 @@ public class DepositTransaction extends Transaction{
 		super.setPostedBalance(balance);
 		super.setTargetAccount(target);
 		super.setDate(new Date());
+		this.setAction(TransactionAction.Deposit);
+	}
+	
+	public TransactionAction getAction() {
+		return action;
+	}
+
+	public void setAction(TransactionAction action) {
+		this.action = action;
 	}
 
 	@Override

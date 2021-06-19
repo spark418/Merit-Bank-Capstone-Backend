@@ -23,7 +23,7 @@ public class RegularIRAAccount extends BankAccount{
 	private AccountHolder accountHolder;
 	
 	public RegularIRAAccount() {
-		
+		super.setOpen(true);
 	}
 	public RegularIRAAccount(double balance) {
 		super(balance,REGULAR_IRA_INTERESTRATE);
