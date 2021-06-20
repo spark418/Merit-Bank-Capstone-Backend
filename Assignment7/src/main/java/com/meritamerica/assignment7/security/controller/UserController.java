@@ -77,14 +77,78 @@ public class UserController {
 	private ClosingAccountService closingAccountService;
 	
 	
-	
-	public String closeCheckingAccount() throws NoResourceFoundException {
+	@PostMapping("/Me/CloseCheckingAccount")
+	@Secured("ROLE_USER")
+	public String closeCheckingAccount(@RequestBody String msg) throws NoResourceFoundException, 
+	AccountIsClosedException {
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
+		if(!user.getAccountHolder().getCheckingAccountList().get(0).isOpen()) 
+			throw new AccountIsClosedException("Account is Closed");
 		
-		return closingAccountService.closeCheckingAccount(user.getAccountHolder().getId(), user.getAccountHolder().getCheckingAccountList().get(0).getAccountNumber());
+		return closingAccountService.closeCheckingAccount(user.getAccountHolder().getId());
 	}
+	@PostMapping("/Me/CloseDBAAccount")
+	@Secured("ROLE_USER")
+	public String closeDBACheckingAccount(@RequestBody TransactionDTO dto) throws NoResourceFoundException, AccountIsClosedException {
+		String username = jwtTokenUtil.getCurrentUserName();
+		User user = userService.getUserByUserName(username);
+		//int id = user.getAccountHolder().getId();
+		if(!accountsService.getDBACheckingAccount(dto.getTargetId(), dto.getSource()).isOpen()) 
+			throw new AccountIsClosedException("Account is Closed");
+		return closingAccountService.closeDBAAccount(user.getAccountHolder().getId(), dto.getSource());
+		
+	}
+	
+	@PostMapping("/Me/CloseCDAccount")
+	@Secured("ROLE_USER")
+	public String closeCDAccount(@RequestBody TransactionDTO dto) throws NoResourceFoundException, AccountIsClosedException {
+		String username = jwtTokenUtil.getCurrentUserName();
+		User user = userService.getUserByUserName(username);
+		//int id = user.getAccountHolder().getId();
+		if(!accountsService.getDBACheckingAccount(dto.getTargetId(), dto.getSource()).isOpen()) 
+			throw new AccountIsClosedException("Account is Closed");
+		return closingAccountService.closeCDAccount(user.getAccountHolder().getId(), dto.getSource());
+		
+	}
+	
+	
+	@PostMapping("/Me/CloseRegularIRAAccount")
+	@Secured("ROLE_USER")
+	public String closeRegularIRAAccount(@RequestBody TransactionDTO dto) throws NoResourceFoundException, AccountIsClosedException {
+		String username = jwtTokenUtil.getCurrentUserName();
+		User user = userService.getUserByUserName(username);
+		//int id = user.getAccountHolder().getId();
+		if(!user.getAccountHolder().getRegularIRAAccountList().get(0).isOpen()) 
+			throw new AccountIsClosedException("Account is Closed");
+		return closingAccountService.closeRegularIRAAccount(user.getAccountHolder().getId());
+		
+	}
+	
+	@PostMapping("/Me/CloseRolloverIRAAccount")
+	@Secured("ROLE_USER")
+	public String closeRolloverIRAAccount(@RequestBody TransactionDTO dto) throws NoResourceFoundException, AccountIsClosedException {
+		String username = jwtTokenUtil.getCurrentUserName();
+		User user = userService.getUserByUserName(username);
+		//int id = user.getAccountHolder().getId();
+		if(!user.getAccountHolder().getRolloverIRAAccountList().get(0).isOpen()) 
+			throw new AccountIsClosedException("Account is Closed");
+		return closingAccountService.closeRolloverIRAAccount(user.getAccountHolder().getId());
+	}
+	
+	@PostMapping("/Me/CloseRothIRAAccount")
+	@Secured("ROLE_USER")
+	public String closeRothIRAAccount(@RequestBody TransactionDTO dto) throws NoResourceFoundException, AccountIsClosedException {
+		String username = jwtTokenUtil.getCurrentUserName();
+		User user = userService.getUserByUserName(username);
+		//int id = user.getAccountHolder().getId();
+		if(!user.getAccountHolder().getRothIRAAccountList().get(0).isOpen()) 
+			throw new AccountIsClosedException("Account is Closed");
+		return closingAccountService.closeRothIRAAccount(user.getAccountHolder().getId());
+	}
+	
 
+	
 	@GetMapping("/Me")
 	@Secured("ROLE_USER")
 	public AccountHolder getAccountHolderById() {
@@ -96,7 +160,8 @@ public class UserController {
 	
 	@PostMapping("/Me/checkingaccounts")
 	@Secured("ROLE_USER")
-	public CheckingAccount addCheckingAccount(@RequestBody CheckingAccount checkingAccount) throws NoResourceFoundException, NegativeAmountException, ExceedsCombinedBalanceLimitException, ExceedsNumberOfAccountsLimitException {
+	public CheckingAccount addCheckingAccount(@RequestBody CheckingAccount checkingAccount) throws NoResourceFoundException, 
+	NegativeAmountException, ExceedsCombinedBalanceLimitException, ExceedsNumberOfAccountsLimitException {
 		if(checkingAccount.getBalance()<0) {
 			throw new NegativeAmountException();
 		}
@@ -109,6 +174,7 @@ public class UserController {
 		if (accHolder.getCombinedBalance()+checkingAccount.getBalance()>250000) {
 			throw new ExceedsCombinedBalanceLimitException("exceeds limit of amount 250,000 max");
 		}
+	
 		
 		return accountsService.addCheckingAccount(accHolder.getId(),checkingAccount);	
 	}
@@ -118,13 +184,15 @@ public class UserController {
 	public List<CheckingAccount> getCheckingAccount() throws AccountIsClosedException{
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
-		if(!user.getAccountHolder().getCheckingAccountList().get(0).isOpen()) throw new AccountIsClosedException("Account is Closed");
+		
+
 		return user.getAccountHolder().getCheckingAccountList();
 	}
 	
 	@PostMapping("/Me/savingsaccounts")
 	@Secured("ROLE_USER")
-	public SavingsAccount addSavingsAccount(@RequestBody SavingsAccount savingsAccount) throws NoResourceFoundException, NegativeAmountException, ExceedsCombinedBalanceLimitException, ExceedsNumberOfAccountsLimitException {
+	public SavingsAccount addSavingsAccount(@RequestBody SavingsAccount savingsAccount) throws NoResourceFoundException, 
+	NegativeAmountException, ExceedsCombinedBalanceLimitException, ExceedsNumberOfAccountsLimitException {
 		if(savingsAccount.getBalance()<0) {
 			throw new NegativeAmountException();
 		}
@@ -161,14 +229,16 @@ public class UserController {
 		if(accHolder==null) {
 			throw new NoResourceFoundException("Invalid id");
 		}
+		
 		return accountsService.addCDAccount(accHolder.getId(),cdAccount);
 	}
 	
 	@GetMapping("/Me/cdaccounts")
 	@Secured("ROLE_USER")
-	public List<CDAccount> getCDAccount(){
+	public List<CDAccount> getCDAccount() throws AccountIsClosedException{
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
+		
 		return user.getAccountHolder().getCdAccList();
 	}
 	
@@ -213,14 +283,15 @@ public class UserController {
 	
 	@GetMapping("/Me/regulariraaccounts")
 	@Secured("ROLE_USER")
-	public List<RegularIRAAccount> getRegularIRAAccount(){
+	public List<RegularIRAAccount> getRegularIRAAccount() throws AccountIsClosedException{
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
 		return user.getAccountHolder().getRegularIRAAccountList();
 	}
 	@PostMapping("/Me/rothiraaccounts")
 	@Secured("ROLE_USER")
-	public RothIRAAccount addRothIRAAccount(@RequestBody RothIRAAccount rothIRAAccount) throws NoResourceFoundException, NegativeAmountException, ExceedsCombinedBalanceLimitException, ExceedsNumberOfAccountsLimitException {
+	public RothIRAAccount addRothIRAAccount(@RequestBody RothIRAAccount rothIRAAccount) throws NoResourceFoundException, 
+	NegativeAmountException, ExceedsCombinedBalanceLimitException, ExceedsNumberOfAccountsLimitException {
 		if(rothIRAAccount.getBalance()<0) {
 			throw new NegativeAmountException();
 		}
@@ -243,7 +314,8 @@ public class UserController {
 	}
 	@PostMapping("/Me/rolloveriraaccounts")
 	@Secured("ROLE_USER")
-	public RolloverIRAAccount addRolloverIRAAccount(@RequestBody RolloverIRAAccount rolloverIRAAccount) throws NoResourceFoundException, NegativeAmountException, ExceedsCombinedBalanceLimitException, ExceedsNumberOfAccountsLimitException {
+	public RolloverIRAAccount addRolloverIRAAccount(@RequestBody RolloverIRAAccount rolloverIRAAccount) throws NoResourceFoundException, 
+	NegativeAmountException, ExceedsCombinedBalanceLimitException, ExceedsNumberOfAccountsLimitException {
 		if(rolloverIRAAccount.getBalance()<0) {
 			throw new NegativeAmountException();
 		}
@@ -363,7 +435,8 @@ public class UserController {
 	@PostMapping("/Me/checkingaccount/deposittransaction")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
-	public Transaction depositToCheckingAccount(@RequestBody TransactionDTO dto) throws ZeroAmountException, NegativeAmountException{
+	public Transaction depositToCheckingAccount(@RequestBody TransactionDTO dto) throws ZeroAmountException, 
+	NegativeAmountException, AccountIsClosedException{
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
 		CheckingAccount account = user.getAccountHolder().getCheckingAccountList().get(0);
@@ -371,7 +444,8 @@ public class UserController {
 		
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 		if(dto.getAmount() == 0) throw new ZeroAmountException("amount cannot be zero");
-		
+		if(!user.getAccountHolder().getCheckingAccountList().get(0).isOpen()) 
+			throw new AccountIsClosedException("Account is Closed");
 		
 		DepositTransaction transaction =  new DepositTransaction(dto.getAmount(), 
 		account.getBalance() + dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
@@ -386,7 +460,7 @@ public class UserController {
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
 	public Transaction withdrawToCheckingAccount(@RequestBody TransactionDTO dto) throws NegativeAmountException, 
-	ZeroAmountException, ZeroBalanceException{
+	ZeroAmountException, ZeroBalanceException, AccountIsClosedException{
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
 		CheckingAccount account = user.getAccountHolder().getCheckingAccountList().get(0);
@@ -396,6 +470,8 @@ public class UserController {
 		if(account.getBalance() <dto.getAmount() ) throw new ZeroBalanceException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Invalid Transaction");
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
+		if(!user.getAccountHolder().getCheckingAccountList().get(0).isOpen()) 
+			throw new AccountIsClosedException("Account is Closed");
 
 		
 		WithdrawTransaction transaction =  new WithdrawTransaction(dto.getAmount(), 
@@ -412,7 +488,7 @@ public class UserController {
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
 	public Transaction TransferFromChecking(@RequestBody TransactionDTO dto) throws NegativeAmountException, 
-	ZeroAmountException, ZeroBalanceException{
+	ZeroAmountException, ZeroBalanceException, AccountIsClosedException{
 		
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
@@ -424,6 +500,8 @@ public class UserController {
 		if(account.getBalance() == 0) throw new ZeroBalanceException("InvalidTransaction");
 		if(account.getBalance() < dto.getAmount()) throw new ZeroBalanceException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
+		if(!user.getAccountHolder().getCheckingAccountList().get(0).isOpen()) 
+			throw new AccountIsClosedException("Account is Closed");
 		
 		
 		TransferTransaction sourceTransaction = new TransferTransaction(dto.getAmount(), target.getBalance() + dto.getAmount(), 
@@ -437,13 +515,15 @@ public class UserController {
 	
 	@GetMapping("/Me/checkingaccount/transactions")
 	@Secured("ROLE_USER")
-	public List<Transaction> getCheckingTransactions() throws NoResourceFoundException{
+	public List<Transaction> getCheckingTransactions() throws NoResourceFoundException, AccountIsClosedException{
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
 		 CheckingAccount account = null;
 		if(user.getAccountHolder().getCheckingAccountList().size() == 0) 
 			throw new NoResourceFoundException("Account is Null");
 		else
+			if(!user.getAccountHolder().getCheckingAccountList().get(0).isOpen()) 
+				throw new AccountIsClosedException("Account is Closed");
 			account = user.getAccountHolder().getCheckingAccountList().get(0);
 		    return account.getAllTransactions();
 	}
@@ -455,7 +535,8 @@ public class UserController {
 	@PostMapping("/Me/dbaccount/{accountNum}/deposittransaction")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
-	public Transaction depositToDBAAccount(@RequestBody TransactionDTO dto, @PathVariable long accountNum) throws NegativeAmountException, ZeroAmountException{
+	public Transaction depositToDBAAccount(@RequestBody TransactionDTO dto, @PathVariable long accountNum) throws NegativeAmountException, 
+	ZeroAmountException, AccountIsClosedException{
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
 		DBACheckingAccount account = accountsService.getDBACheckingAccount(user.getAccountHolder().getId(), accountNum);
@@ -463,7 +544,7 @@ public class UserController {
 		
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 		if(dto.getAmount()== 0) throw new ZeroAmountException("amount cannot be zero");
-		
+		if(!account.isOpen()) throw new AccountIsClosedException("Account is Closed");
 		
 		DepositTransaction transaction =  new DepositTransaction(dto.getAmount(), 
 		account.getBalance() + dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
@@ -477,7 +558,7 @@ public class UserController {
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
 	public Transaction withdrawToDBAAccount(@RequestBody TransactionDTO dto,  @PathVariable long accountNum) throws 
-	NegativeAmountException, ZeroAmountException{
+	NegativeAmountException, ZeroAmountException, AccountIsClosedException{
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
 		DBACheckingAccount account = accountsService.getDBACheckingAccount(user.getAccountHolder().getId(), accountNum);
@@ -486,7 +567,7 @@ public class UserController {
 		if(account.getBalance() < dto.getAmount() ) throw new ZeroAmountException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Amount cannot be zero");
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
-
+		if(!account.isOpen()) throw new AccountIsClosedException("Account is Closed");
 		
 		WithdrawTransaction transaction =  new WithdrawTransaction(dto.getAmount(), 
 		account.getBalance() -+ dto.getAmount(), TransactionType.valueOf(dto.getTransactionType()), account);
@@ -502,11 +583,12 @@ public class UserController {
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
 	public Transaction TransferFromDBA(@RequestBody TransactionDTO dto,  @PathVariable long accountNum) throws NegativeAmountException, 
-	ZeroAmountException, ZeroBalanceException{
+	ZeroAmountException, ZeroBalanceException, AccountIsClosedException{
 		
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
 		DBACheckingAccount account = accountsService.getDBACheckingAccount(user.getAccountHolder().getId(), accountNum);
+		if(!account.isOpen()) throw new AccountIsClosedException("Account is Closed");
 		
 		BankAccount target = accountsService.findAccount(dto.getTarget(), dto.getTargetId());
 		
@@ -552,12 +634,12 @@ public class UserController {
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
 	public Transaction depositToCDAccount(@RequestBody TransactionDTO dto, @PathVariable long accountNum) throws NegativeAmountException, 
-	ZeroAmountException{
+	ZeroAmountException, AccountIsClosedException{
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
 		CDAccount account = accountsService.getCDAccount(user.getAccountHolder().getId(), accountNum);
 		//account.setBalance(dto.getAmount() + account.getBalance());
-		
+		if(!account.isOpen()) throw new AccountIsClosedException("Account is Closed");
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 		if(dto.getAmount()== 0) throw new ZeroAmountException("amount cannot be zero");
 		
@@ -573,12 +655,13 @@ public class UserController {
 	@PostMapping("/Me/cdaccount/{accountNum}/withdrawtransaction")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
-	public Transaction withdrawToCDAccount(@RequestBody TransactionDTO dto,  @PathVariable long accountNum) throws NegativeAmountException, ZeroAmountException, ZeroBalanceException{
+	public Transaction withdrawToCDAccount(@RequestBody TransactionDTO dto,  @PathVariable long accountNum) throws NegativeAmountException, 
+	ZeroAmountException, ZeroBalanceException, AccountIsClosedException{
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
 		CDAccount account = accountsService.getCDAccount(user.getAccountHolder().getId(), accountNum);
 		//account.setBalance(dto.getAmount() + account.getBalance());
-		
+		if(!account.isOpen()) throw new AccountIsClosedException("Account is Closed");
 		if(account.getBalance() == 0) throw new ZeroBalanceException("balance is zero");
 		if(account.getBalance() < dto.getAmount() ) throw new ZeroBalanceException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Invalid Transaction");
@@ -598,14 +681,15 @@ public class UserController {
 	@PostMapping("/Me/cdaccount/{accountNum}/transfer")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
-	public Transaction TransferFromCD(@RequestBody TransactionDTO dto,  @PathVariable long accountNum) throws NegativeAmountException, ZeroAmountException, ZeroBalanceException{
+	public Transaction TransferFromCD(@RequestBody TransactionDTO dto,  @PathVariable long accountNum) throws NegativeAmountException, 
+	ZeroAmountException, ZeroBalanceException, AccountIsClosedException{
 		
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
 		CDAccount account = accountsService.getCDAccount(user.getAccountHolder().getId(), accountNum);
 		
 		BankAccount target = accountsService.findAccount(dto.getTarget(), dto.getTargetId());
-		
+		if(!account.isOpen()) throw new AccountIsClosedException("Account is Closed");
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 		if(account.getBalance() == 0) throw new ZeroBalanceException("InvalidTransaction");
 		if(account.getBalance() < dto.getAmount() ) throw new ZeroBalanceException("Invalid Transaction");
@@ -649,12 +733,13 @@ public class UserController {
 	@PostMapping("/Me/RegularIRA/deposittransaction")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
-	public Transaction depositToRegularIRAAccount(@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException{
+	public Transaction depositToRegularIRAAccount(@RequestBody TransactionDTO dto) throws NegativeAmountException, 
+	ZeroAmountException, AccountIsClosedException{
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
 		RegularIRAAccount account = user.getAccountHolder().getRegularIRAAccountList().get(0);
 		//account.setBalance(dto.getAmount() + account.getBalance());
-		
+		if(!account.isOpen()) throw new AccountIsClosedException("Account is Closed");
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 		if(dto.getAmount()== 0) throw new ZeroAmountException("amount cannot be zero");
 		
@@ -669,12 +754,13 @@ public class UserController {
 	@PostMapping("/Me/RegularIRA/withdrawtransaction")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
-	public Transaction withdrawToRegularIRAAccount(@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException, ZeroBalanceException{
+	public Transaction withdrawToRegularIRAAccount(@RequestBody TransactionDTO dto) throws NegativeAmountException, 
+	ZeroAmountException, ZeroBalanceException, AccountIsClosedException{
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
 		RegularIRAAccount account = user.getAccountHolder().getRegularIRAAccountList().get(0);
 		//account.setBalance(dto.getAmount() + account.getBalance());
-		
+		if(!account.isOpen()) throw new AccountIsClosedException("Account is Closed");
 		if(account.getBalance() == 0) throw new ZeroBalanceException("balance is zero");
 		if(account.getBalance() < dto.getAmount() ) throw new ZeroBalanceException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Invalid Transaction");
@@ -694,7 +780,8 @@ public class UserController {
 	@PostMapping("/Me/RegularIRA/transfer")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
-	public Transaction TransferFromRegularIRA(@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException, ZeroBalanceException{
+	public Transaction TransferFromRegularIRA(@RequestBody TransactionDTO dto) throws NegativeAmountException, 
+	ZeroAmountException, ZeroBalanceException, AccountIsClosedException{
 		
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
@@ -702,6 +789,7 @@ public class UserController {
 		
 		BankAccount target = accountsService.findAccount(dto.getTarget(), dto.getTargetId());
 		
+		if(!account.isOpen()) throw new AccountIsClosedException("Account is Closed");
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 		if(account.getBalance() == 0) throw new ZeroBalanceException("InvalidTransaction");
 		if(account.getBalance() < dto.getAmount() ) throw new ZeroBalanceException("Invalid Transaction");
@@ -739,12 +827,13 @@ public class UserController {
 	@PostMapping("/Me/RolloverIRA/deposittransaction")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
-	public Transaction depositToRolloverIRAAccount(@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException{
+	public Transaction depositToRolloverIRAAccount(@RequestBody TransactionDTO dto) throws NegativeAmountException, 
+	ZeroAmountException, AccountIsClosedException{
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
 		RolloverIRAAccount account = user.getAccountHolder().getRolloverIRAAccountList().get(0);
 		//account.setBalance(dto.getAmount() + account.getBalance());
-		
+		if(!account.isOpen()) throw new AccountIsClosedException("Account is Closed");
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 		if(dto.getAmount()== 0) throw new ZeroAmountException("amount cannot be zero");
 		
@@ -761,12 +850,12 @@ public class UserController {
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
 	public Transaction withdrawToRolloverIRAAccount(@RequestBody TransactionDTO dto) throws NegativeAmountException, 
-	ZeroAmountException, ZeroBalanceException{
+	ZeroAmountException, ZeroBalanceException, AccountIsClosedException{
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
 		RolloverIRAAccount account = user.getAccountHolder().getRolloverIRAAccountList().get(0);
 		//account.setBalance(dto.getAmount() + account.getBalance());
-		
+		if(!account.isOpen()) throw new AccountIsClosedException("Account is Closed");
 		if(account.getBalance() == 0) throw new ZeroBalanceException("balance is zero");
 		if(account.getBalance() < dto.getAmount()) throw new ZeroBalanceException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Invalid Transaction");
@@ -787,14 +876,15 @@ public class UserController {
 	@PostMapping("/Me/RolloverIRA/transfer")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
-	public Transaction TransferFromRolloverIRA(@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException, ZeroBalanceException{
+	public Transaction TransferFromRolloverIRA(@RequestBody TransactionDTO dto) throws NegativeAmountException, 
+	ZeroAmountException, ZeroBalanceException, AccountIsClosedException{
 		
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
 		RolloverIRAAccount account = user.getAccountHolder().getRolloverIRAAccountList().get(0);
 		
 		BankAccount target = accountsService.findAccount(dto.getTarget(), dto.getTargetId());
-		
+		if(!account.isOpen()) throw new AccountIsClosedException("Account is Closed");
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 		if(account.getBalance() == 0) throw new ZeroBalanceException("InvalidTransaction");
 		if(account.getBalance() < dto.getAmount() ) throw new ZeroBalanceException("Invalid Transaction");
@@ -833,12 +923,13 @@ public class UserController {
 	@PostMapping("/Me/RothIRA/deposittransaction")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
-	public Transaction depositToRothIRAAccount(@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException{
+	public Transaction depositToRothIRAAccount(@RequestBody TransactionDTO dto) throws NegativeAmountException, 
+	ZeroAmountException, AccountIsClosedException{
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
 		RothIRAAccount account = user.getAccountHolder().getRothIRAAccountList().get(0);
 		//account.setBalance(dto.getAmount() + account.getBalance());
-		
+		if(!account.isOpen()) throw new AccountIsClosedException("Account is Closed");
 		if(dto.getAmount() < 0) throw new NegativeAmountException();
 		if(dto.getAmount()== 0) throw new ZeroAmountException("amount cannot be zero");
 		
@@ -856,12 +947,13 @@ public class UserController {
 	@PostMapping("/Me/RothIRA/withdrawtransaction")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
-	public Transaction withdrawToRothIRAAccount(@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException, ZeroBalanceException{
+	public Transaction withdrawToRothIRAAccount(@RequestBody TransactionDTO dto) throws NegativeAmountException, 
+	ZeroAmountException, ZeroBalanceException, AccountIsClosedException{
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
 		RothIRAAccount account = user.getAccountHolder().getRothIRAAccountList().get(0);
 		//account.setBalance(dto.getAmount() + account.getBalance());
-		
+		if(!account.isOpen()) throw new AccountIsClosedException("Account is Closed");
 		if(account.getBalance() == 0) throw new ZeroBalanceException("balance is zero");
 		if(account.getBalance() < dto.getAmount() ) throw new ZeroBalanceException("Invalid Transaction");
 		if(dto.getAmount() == 0) throw new ZeroAmountException("Invalid Transaction");
@@ -883,12 +975,13 @@ public class UserController {
 	@PostMapping("/Me/RothIRA/transfer")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
-	public Transaction TransferFromRothIRA(@RequestBody TransactionDTO dto) throws NegativeAmountException, ZeroAmountException, ZeroBalanceException{
+	public Transaction TransferFromRothIRA(@RequestBody TransactionDTO dto) throws NegativeAmountException, 
+	ZeroAmountException, ZeroBalanceException, AccountIsClosedException{
 		
 		String username = jwtTokenUtil.getCurrentUserName();
 		User user = userService.getUserByUserName(username);
 		RothIRAAccount account = user.getAccountHolder().getRothIRAAccountList().get(0);
-		
+		if(!account.isOpen()) throw new AccountIsClosedException("Account is Closed");
 		BankAccount target = accountsService.findAccount(dto.getTarget(), dto.getTargetId());
 		
 		if(dto.getAmount() < 0) throw new NegativeAmountException();

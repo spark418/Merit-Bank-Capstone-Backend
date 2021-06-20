@@ -23,10 +23,11 @@ public class RolloverIRAAccount extends BankAccount{
 	private AccountHolder accountHolder;
 	
 	public RolloverIRAAccount() {
-		super.setOpen(true);
+		
 	}
 	public RolloverIRAAccount(double balance) {
 		super(balance,ROLLOVER_IRA_INTERESTRATE);
+		super.setOpen(true);
 	}
 	
 	public AccountHolder getAccountHolder() {

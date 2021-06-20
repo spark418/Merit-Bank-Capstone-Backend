@@ -20,7 +20,7 @@ public abstract class BankAccount {
 	private  double balance;
 	private  double interestRate;
 	private  LocalDateTime openingDate;
-	private boolean isOpen;
+	private boolean isOpen = true;
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "sourceAccount")
 	private List <Transaction> sourceTransactions = new ArrayList<>();
@@ -34,9 +34,9 @@ public abstract class BankAccount {
 	}
 	public BankAccount(double balance, double interestRate) {
 		this.balance=balance;
-	
 		this.interestRate = interestRate;
 		this.openingDate = LocalDateTime.now();
+		
 	}
 	
 	
@@ -127,8 +127,37 @@ public abstract class BankAccount {
 		if(!sourceTransactions.isEmpty() || !targetTransactions.isEmpty())
 			merged = new ArrayList<>(sourceTransactions);
 			merged.addAll(targetTransactions);
-		return merged;
+		return quickSort(merged, 0, merged.size());
 	}
+	
+	private List<Transaction> quickSort(List<Transaction> list, int left, int right){
+        int l = left;
+        int r = right - 1;
+        int size = right - left;
+
+        if(size > 1){
+            Random rn = new Random();
+            long pivot = list.get(rn.nextInt(size) + l).getDate().getTime();
+
+            while(l < r){
+                while(list.get(r).getDate().getTime() < pivot && r > l){
+                    r--;
+                }
+                while(list.get(l).getDate().getTime() > pivot && l <= r){
+                    l ++;
+                }
+                if(l < r){
+                    Transaction temp = list.get(l);
+                    list.set(l, list.get(r));
+                    list.set(r, temp);
+                    l++;
+                }
+            }
+            quickSort(list, left, l);
+            quickSort(list, r, right);
+        }
+        return list;
+    }
 
 }
 

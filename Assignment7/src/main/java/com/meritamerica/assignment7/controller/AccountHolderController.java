@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,10 +27,15 @@ import com.meritamerica.assignment7.models.RegularIRAAccount;
 import com.meritamerica.assignment7.models.RolloverIRAAccount;
 import com.meritamerica.assignment7.models.RothIRAAccount;
 import com.meritamerica.assignment7.models.SavingsAccount;
+
+import com.meritamerica.assignment7.security.models.User;
+import com.meritamerica.assignment7.exceptions.AccountIsClosedException;
 import com.meritamerica.assignment7.exceptions.InvalidAccountDetailsException;
 import com.meritamerica.assignment7.exceptions.NoResourceFoundException;
 import com.meritamerica.assignment7.models.AccountHolder;
 import com.meritamerica.assignment7.services.AccountHolderService;
+import com.meritamerica.assignment7.services.AccountsService;
+import com.meritamerica.assignment7.services.ClosingAccountService;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -38,6 +44,13 @@ public class AccountHolderController {
 	
 	@Autowired
 	private AccountHolderService accountHolderService;
+	
+	@Autowired
+	private ClosingAccountService closingAccountService;
+	
+	@Autowired
+	private AccountsService accountsService;
+	
 	
 	@PostMapping(value="/accountholder")
 	@Secured("ROLE_ADMIN")
@@ -146,6 +159,70 @@ public class AccountHolderController {
 	public List<RolloverIRAAccount> getRolloverIRAAccount(@PathVariable int id) throws NoResourceFoundException{
 		return accountHolderService.getRolloverIRAAccount(id);
 	}
+	
+	@PutMapping("/accountholder/{id}/CloseCheckingAccount")
+	@Secured("ROLE_ADMIN")
+	public String closeCheckingAccount(@PathVariable int id) throws NoResourceFoundException, 
+	AccountIsClosedException {
+		if(!accountHolderService.getCheckingAccount(id).get(0).isOpen()) 
+			throw new AccountIsClosedException("Account is Closed");
+		
+		return closingAccountService.closeCheckingAccount(id);
+	}
+	@PutMapping("/accountholder/{id}/CloseDBAAccount/{accountNum}")
+	@Secured("ROLE_ADMIN")
+	public String closeDBACheckingAccount(@PathVariable int id, @PathVariable long accountNum) 
+			throws NoResourceFoundException, AccountIsClosedException {
+		if(!accountsService.getDBACheckingAccount(id, accountNum).isOpen()) 
+			throw new AccountIsClosedException("Account is Closed");
+		
+		return closingAccountService.closeDBAAccount(id, accountNum);
+		
+	}
+	
+	@PutMapping("/accountholder/{id}/CloseCDAccount/{accountNum}")
+	@Secured("ROLE_ADMIN")
+	public String closeCDAccount(@PathVariable int id, @PathVariable long accountNum) throws NoResourceFoundException, 
+	AccountIsClosedException {
+		//int id = user.getAccountHolder().getId();
+		if(!accountsService.getCDAccount(id, accountNum).isOpen()) 
+			throw new AccountIsClosedException("Account is Closed");
+		return closingAccountService.closeCDAccount(id, accountNum);
+		
+	}
+	
+	
+	@PutMapping("/accountholder/{id}/CloseRegularIRAAccount")
+	@Secured("ROLE_ADMIN")
+	public String closeRegularIRAAccount(@PathVariable int id) throws NoResourceFoundException, AccountIsClosedException {
+
+		//int id = user.getAccountHolder().getId();
+		if(!accountHolderService.getRegularIRACheckingAccount(id).get(0).isOpen())
+			throw new AccountIsClosedException("Account is Closed");
+		return closingAccountService.closeRegularIRAAccount(id);
+		
+	}
+	
+	@PutMapping("/accountholder/{id}/CloseRolloverIRAAccount")
+	@Secured("ROLE_ADMIN")
+	public String closeRolloverIRAAccount(@PathVariable int id) throws NoResourceFoundException, AccountIsClosedException {
+
+		//int id = user.getAccountHolder().getId();
+		if(!accountHolderService.getRolloverIRAAccount(id).get(0).isOpen()) 
+			throw new AccountIsClosedException("Account is Closed");
+		return closingAccountService.closeRolloverIRAAccount(id);
+	}
+	
+	@PutMapping("/accountholder/{id}/CloseRothIRAAccount")
+	@Secured("ROLE_ADMIN")
+	public String closeRothIRAAccount(@PathVariable int id) throws NoResourceFoundException, AccountIsClosedException {
+
+		//int id = user.getAccountHolder().getId();
+		if(!accountHolderService.getRothIRAAccount(id).get(0).isOpen()) 
+			throw new AccountIsClosedException("Account is Closed");
+		return closingAccountService.closeRothIRAAccount(id);
+	}
+
 	
 	
 }

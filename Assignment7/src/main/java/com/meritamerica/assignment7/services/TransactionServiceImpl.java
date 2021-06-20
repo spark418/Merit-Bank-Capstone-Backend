@@ -2,6 +2,7 @@ package com.meritamerica.assignment7.services;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -68,7 +69,13 @@ public class TransactionServiceImpl implements TransactionService {
 	@Override
 	public List <Transaction> getTransactions(BankAccount account) {
 		// TODO Auto-generated method stub
+		//List<Transaction> transactions = quickSort(account.getAllTransactions(), 0, account.getAllTransactions().size());
+		
 		return account.getAllTransactions();
 	}
+	
+	
+	
+	
 
 }

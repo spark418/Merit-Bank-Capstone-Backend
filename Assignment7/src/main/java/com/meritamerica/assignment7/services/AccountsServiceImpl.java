@@ -297,10 +297,7 @@ public class AccountsServiceImpl implements AccountsService {
 			if(accounts.get(i).getAccountNumber() == accountNum) account = accounts.get(i);
 		}
 		return account;
-	}
-	
-	
-	
+	}	
 	
 
 }
