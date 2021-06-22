@@ -542,7 +542,7 @@ public class UserController {
 	
 	//dba account endpoints
 	  
-	@PostMapping("/Me/dbaccount/{accountNum}/deposittransaction")
+	@PostMapping("/Me/dbaaccount/{accountNum}/deposittransaction")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
 	public Transaction depositToDBAAccount(@RequestBody TransactionDTO dto, @PathVariable long accountNum) throws NegativeAmountException, 
@@ -564,7 +564,7 @@ public class UserController {
 		
 	}
 	
-	@PostMapping("/Me/dbaccount/{accountNum}/withdrawtransaction")
+	@PostMapping("/Me/dbaaccount/{accountNum}/withdrawtransaction")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
 	public Transaction withdrawToDBAAccount(@RequestBody TransactionDTO dto,  @PathVariable long accountNum) throws 
@@ -589,7 +589,7 @@ public class UserController {
 		
 	}
 	
-	@PostMapping("/Me/dbaccount/{accountNum}/transfer")
+	@PostMapping("/Me/dbaaccount/{accountNum}/transfer")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
 	public Transaction TransferFromDBA(@RequestBody TransactionDTO dto,  @PathVariable long accountNum) throws NegativeAmountException, 
@@ -740,7 +740,7 @@ public class UserController {
 	//Regular IRA Account Transactions endpoints
 	
 	
-	@PostMapping("/Me/RegularIRA/deposittransaction")
+	@PostMapping("/Me/regularira/deposittransaction")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
 	public Transaction depositToRegularIRAAccount(@RequestBody TransactionDTO dto) throws NegativeAmountException, 
@@ -761,7 +761,7 @@ public class UserController {
 		
 	}
 	
-	@PostMapping("/Me/RegularIRA/withdrawtransaction")
+	@PostMapping("/Me/regularira/withdrawtransaction")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
 	public Transaction withdrawToRegularIRAAccount(@RequestBody TransactionDTO dto) throws NegativeAmountException, 
@@ -787,7 +787,7 @@ public class UserController {
 	
 	
 	
-	@PostMapping("/Me/RegularIRA/transfer")
+	@PostMapping("/Me/regularira/transfer")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
 	public Transaction TransferFromRegularIRA(@RequestBody TransactionDTO dto) throws NegativeAmountException, 
@@ -818,7 +818,7 @@ public class UserController {
 	
 	
 	
-	@GetMapping("/Me/RegularIRA/transactions")
+	@GetMapping("/Me/regularira/transactions")
 	@Secured("ROLE_USER")
 	public List<Transaction> getRegularTransactions() throws NoResourceFoundException{
 		String username = jwtTokenUtil.getCurrentUserName();
@@ -834,7 +834,7 @@ public class UserController {
 	
 	//Rollover IRA Account Transactions endpoints
 	
-	@PostMapping("/Me/RolloverIRA/deposittransaction")
+	@PostMapping("/Me/rolloverira/deposittransaction")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
 	public Transaction depositToRolloverIRAAccount(@RequestBody TransactionDTO dto) throws NegativeAmountException, 
@@ -856,7 +856,7 @@ public class UserController {
 		
 	}
 	
-	@PostMapping("/Me/RolloverIRA/withdrawtransaction")
+	@PostMapping("/Me/rolloverira/withdrawtransaction")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
 	public Transaction withdrawToRolloverIRAAccount(@RequestBody TransactionDTO dto) throws NegativeAmountException, 
@@ -883,7 +883,7 @@ public class UserController {
 	
 	
 	
-	@PostMapping("/Me/RolloverIRA/transfer")
+	@PostMapping("/Me/rolloverira/transfer")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
 	public Transaction TransferFromRolloverIRA(@RequestBody TransactionDTO dto) throws NegativeAmountException, 
@@ -912,7 +912,7 @@ public class UserController {
 	}
 	
 	
-	@GetMapping("/Me/RolloverIRA/transactions")
+	@GetMapping("/Me/rolloverira/transactions")
 	@Secured("ROLE_USER")
 	public List<Transaction> getRolloverTransactions() throws NoResourceFoundException{
 		String username = jwtTokenUtil.getCurrentUserName();
@@ -930,7 +930,7 @@ public class UserController {
 	//Roth IRA Account Transactions endpoints
 	
 	
-	@PostMapping("/Me/RothIRA/deposittransaction")
+	@PostMapping("/Me/rothira/deposittransaction")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
 	public Transaction depositToRothIRAAccount(@RequestBody TransactionDTO dto) throws NegativeAmountException, 
@@ -954,7 +954,7 @@ public class UserController {
 	}
 	
 	
-	@PostMapping("/Me/RothIRA/withdrawtransaction")
+	@PostMapping("/Me/rothira/withdrawtransaction")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
 	public Transaction withdrawToRothIRAAccount(@RequestBody TransactionDTO dto) throws NegativeAmountException, 
@@ -982,7 +982,7 @@ public class UserController {
 	
 	
 	
-	@PostMapping("/Me/RothIRA/transfer")
+	@PostMapping("/Me/rothira/transfer")
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_USER")
 	public Transaction TransferFromRothIRA(@RequestBody TransactionDTO dto) throws NegativeAmountException, 
@@ -1010,7 +1010,7 @@ public class UserController {
 	}
 	
 	
-	@GetMapping("/Me/RothIRA/transactions")
+	@GetMapping("/Me/rothira/transactions")
 	@Secured("ROLE_USER")
 	public List<Transaction> getRothIRATransactions() throws NoResourceFoundException{
 		String username = jwtTokenUtil.getCurrentUserName();
