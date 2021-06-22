@@ -13,6 +13,7 @@ import com.meritamerica.assignment7.models.RegularIRAAccount;
 import com.meritamerica.assignment7.models.RolloverIRAAccount;
 import com.meritamerica.assignment7.models.RothIRAAccount;
 import com.meritamerica.assignment7.models.SavingsAccount;
+import com.meritamerica.assignment7.security.models.User;
 
 public interface AccountHolderService {
 	public AccountHolder addAccountHolder(AccountHolder accountHolder) throws InvalidAccountDetailsException;
@@ -21,7 +22,7 @@ public interface AccountHolderService {
 	public List<SavingsAccount> getSavingsAccount(int accountHolderId) throws NoResourceFoundException;
 	public List<CDAccount> getCDAccount(int accountHolderId) throws NoResourceFoundException;
 	public List<DBACheckingAccount> getDBACheckingAccount(int accountHolderId) throws NoResourceFoundException;
-	public List<RegularIRAAccount> getRegularIRACheckingAccount(int accountHolderId) throws NoResourceFoundException;
+	public List<RegularIRAAccount> getRegularIRAAccount(int accountHolderId) throws NoResourceFoundException;
 	public List<RothIRAAccount> getRothIRAAccount(int accountHolderId) throws NoResourceFoundException;
 	public List<RolloverIRAAccount> getRolloverIRAAccount(int accountHolderId) throws NoResourceFoundException;
 	public AccountHolder getAccountHolderById(int accountHolderId) throws NoResourceFoundException;
@@ -29,4 +30,6 @@ public interface AccountHolderService {
 	public AccountHoldersContactDetails getContactDetails(int accountHolderId) throws NoResourceFoundException;
 	public AccountHoldersContactDetails updateContactDetails(AccountHoldersContactDetails accountHolderContact,int contactsId)throws NoResourceFoundException;
 	public AccountHolder updateAccountHolder( AccountHolder accountHolder,int id) throws NoResourceFoundException;
+	public List<User> getUsers();
+
 }

@@ -2,6 +2,7 @@ package com.meritamerica.assignment7.models;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -239,37 +240,37 @@ public class AccountHolder {
 	}
 	
 	public int getNumberOfCheckingAccounts() {
-		int numberOfCheckingAccounts = checkingAccountList.size();
+		int numberOfCheckingAccounts = (checkingAccountList.stream().filter(t -> t.isOpen()).collect(Collectors.toList())).size();
 		return numberOfCheckingAccounts;
 	}
 	
 	public int getNumberOfSavingsAccounts() {
-		int numberOfSavingsAccount = savingsAccountList.size();
+		int numberOfSavingsAccount = (savingsAccountList.stream().filter(t -> t.isOpen()).collect(Collectors.toList())).size();
 		return numberOfSavingsAccount;
 	}
 	
 	public int getNumberOfCDAccounts() {
-		int numberOfCDAccounts = cdAccList.size();
+		int numberOfCDAccounts = (cdAccList.stream().filter(t -> t.isOpen()).collect(Collectors.toList())).size();
 		return numberOfCDAccounts;
 	}
 	
 	public int getNumberOfDBACheckingAccounts() {
-		int numberOfDBACheckingAccounts = dbaCheckingAccountList.size();
+		int numberOfDBACheckingAccounts = (dbaCheckingAccountList.stream().filter(t -> t.isOpen()).collect(Collectors.toList())).size();
 		return numberOfDBACheckingAccounts;
 	}
 	
 	public int getNumberOfRolloverIRAAccounts() {
-		int numberOfRolloverIRAAccounts = rolloverIRAAccountList.size();
+		int numberOfRolloverIRAAccounts = (rolloverIRAAccountList.stream().filter(t -> t.isOpen()).collect(Collectors.toList())).size();
 		return numberOfRolloverIRAAccounts;
 	}
 	
 	public int getNumberOfRegularIRAAccounts() {
-		int numberOfRegularIRAAccounts = regularIRAAccountList.size();
+		int numberOfRegularIRAAccounts = (regularIRAAccountList.stream().filter(t -> t.isOpen()).collect(Collectors.toList())).size();
 		return numberOfRegularIRAAccounts;
 	}
 	
 	public int getNumberOfRothIRAAccounts() {
-		int numberOfRothIRAAccounts = rothIRAAccountList.size();
+		int numberOfRothIRAAccounts = (rothIRAAccountList.stream().filter(t -> t.isOpen()).collect(Collectors.toList())).size();
 		return numberOfRothIRAAccounts;
 	}
 	

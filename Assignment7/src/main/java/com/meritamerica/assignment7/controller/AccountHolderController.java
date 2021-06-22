@@ -52,6 +52,12 @@ public class AccountHolderController {
 	private AccountsService accountsService;
 	
 	
+	@GetMapping(value="/users")
+	@Secured("ROLE_ADMIN")
+	public List<User> getUsers(){
+		return accountHolderService.getUsers();
+	}
+	
 	@PostMapping(value="/accountholder")
 	@Secured("ROLE_ADMIN")
 	@ResponseStatus(HttpStatus.CREATED)
@@ -143,7 +149,7 @@ public class AccountHolderController {
 	@ResponseStatus(HttpStatus.CREATED)
 	@Secured("ROLE_ADMIN")
 	public List<RegularIRAAccount> getRegularIRACheckingAccount(@PathVariable int id) throws NoResourceFoundException{
-		return accountHolderService.getRegularIRACheckingAccount(id);
+		return accountHolderService.getRegularIRAAccount(id);
 	}
 	
 	@GetMapping("/accountholder/{id}/rothiraaccounts")
@@ -159,17 +165,18 @@ public class AccountHolderController {
 	public List<RolloverIRAAccount> getRolloverIRAAccount(@PathVariable int id) throws NoResourceFoundException{
 		return accountHolderService.getRolloverIRAAccount(id);
 	}
-	
-	@PutMapping("/accountholder/{id}/CloseCheckingAccount")
+	/*------------------------Closing accounts----------------------------*/
+	@PutMapping("/accountholder/{id}/closecheckingaccount")
 	@Secured("ROLE_ADMIN")
-	public String closeCheckingAccount(@PathVariable int id) throws NoResourceFoundException, 
-	AccountIsClosedException {
-		if(!accountHolderService.getCheckingAccount(id).get(0).isOpen()) 
-			throw new AccountIsClosedException("Account is Closed");
-		
-		return closingAccountService.closeCheckingAccount(id);
-	}
-	@PutMapping("/accountholder/{id}/CloseDBAAccount/{accountNum}")
+    public String closeCheckingAccount(@PathVariable int id) throws NoResourceFoundException, 
+    AccountIsClosedException {
+        if(!accountHolderService.getCheckingAccount(id).get(0).isOpen()) 
+            throw new AccountIsClosedException("Account is Closed");
+        
+        return closingAccountService.closeCheckingAccount(id);
+    }
+	
+	@PutMapping("/accountholder/{id}/closedbaaccount/{accountNum}")
 	@Secured("ROLE_ADMIN")
 	public String closeDBACheckingAccount(@PathVariable int id, @PathVariable long accountNum) 
 			throws NoResourceFoundException, AccountIsClosedException {
@@ -180,7 +187,7 @@ public class AccountHolderController {
 		
 	}
 	
-	@PutMapping("/accountholder/{id}/CloseCDAccount/{accountNum}")
+	@PutMapping("/accountholder/{id}/closecdaccount/{accountNum}")
 	@Secured("ROLE_ADMIN")
 	public String closeCDAccount(@PathVariable int id, @PathVariable long accountNum) throws NoResourceFoundException, 
 	AccountIsClosedException {
@@ -191,19 +198,28 @@ public class AccountHolderController {
 		
 	}
 	
+	@PutMapping("/accountholder/{id}/closesavingsaccount")
+    @Secured("ROLE_ADMIN")
+    public String closeSavingsAccount(@PathVariable int id) throws NoResourceFoundException, 
+    AccountIsClosedException {
+        if(accountHolderService.getAccountHolderById(id) == null) {
+            throw new AccountIsClosedException("Account Holder has already been deleted");
+        }
+        return closingAccountService.closeSavingsAccount(id);
+    }
 	
-	@PutMapping("/accountholder/{id}/CloseRegularIRAAccount")
+	@PutMapping("/accountholder/{id}/closeregulariraaccount")
 	@Secured("ROLE_ADMIN")
 	public String closeRegularIRAAccount(@PathVariable int id) throws NoResourceFoundException, AccountIsClosedException {
 
 		//int id = user.getAccountHolder().getId();
-		if(!accountHolderService.getRegularIRACheckingAccount(id).get(0).isOpen())
+		if(!accountHolderService.getRegularIRAAccount(id).get(0).isOpen())
 			throw new AccountIsClosedException("Account is Closed");
 		return closingAccountService.closeRegularIRAAccount(id);
 		
 	}
 	
-	@PutMapping("/accountholder/{id}/CloseRolloverIRAAccount")
+	@PutMapping("/accountholder/{id}/closerolloveriraaccount")
 	@Secured("ROLE_ADMIN")
 	public String closeRolloverIRAAccount(@PathVariable int id) throws NoResourceFoundException, AccountIsClosedException {
 
@@ -213,7 +229,7 @@ public class AccountHolderController {
 		return closingAccountService.closeRolloverIRAAccount(id);
 	}
 	
-	@PutMapping("/accountholder/{id}/CloseRothIRAAccount")
+	@PutMapping("/accountholder/{id}/closerothiraaccount")
 	@Secured("ROLE_ADMIN")
 	public String closeRothIRAAccount(@PathVariable int id) throws NoResourceFoundException, AccountIsClosedException {
 

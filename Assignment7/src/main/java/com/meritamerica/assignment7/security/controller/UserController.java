@@ -77,7 +77,7 @@ public class UserController {
 	private ClosingAccountService closingAccountService;
 	
 	
-	@PostMapping("/Me/CloseCheckingAccount")
+	@PostMapping("/Me/closecheckingacccount")
 	@Secured("ROLE_USER")
 	public String closeCheckingAccount(@RequestBody String msg) throws NoResourceFoundException, 
 	AccountIsClosedException {
@@ -88,7 +88,7 @@ public class UserController {
 		
 		return closingAccountService.closeCheckingAccount(user.getAccountHolder().getId());
 	}
-	@PostMapping("/Me/CloseDBAAccount")
+	@PostMapping("/Me/closedbaaccount")
 	@Secured("ROLE_USER")
 	public String closeDBACheckingAccount(@RequestBody TransactionDTO dto) throws NoResourceFoundException, AccountIsClosedException {
 		String username = jwtTokenUtil.getCurrentUserName();
@@ -100,20 +100,18 @@ public class UserController {
 		
 	}
 	
-	@PostMapping("/Me/CloseCDAccount")
+	@PostMapping("/Me/closecdaccount")
 	@Secured("ROLE_USER")
-	public String closeCDAccount(@RequestBody TransactionDTO dto) throws NoResourceFoundException, AccountIsClosedException {
-		String username = jwtTokenUtil.getCurrentUserName();
-		User user = userService.getUserByUserName(username);
-		//int id = user.getAccountHolder().getId();
-		if(!accountsService.getDBACheckingAccount(dto.getTargetId(), dto.getSource()).isOpen()) 
-			throw new AccountIsClosedException("Account is Closed");
-		return closingAccountService.closeCDAccount(user.getAccountHolder().getId(), dto.getSource());
-		
+    public String closeCDAccount(@RequestBody TransactionDTO dto) throws NoResourceFoundException, AccountIsClosedException {
+        String username = jwtTokenUtil.getCurrentUserName();
+        User user = userService.getUserByUserName(username);
+        //int id = user.getAccountHolder().getId();
+        if(!accountsService.getCDAccount(dto.getTargetId(), dto.getSource()).isOpen()) 
+            throw new AccountIsClosedException("Account is Closed");
+        return closingAccountService.closeCDAccount(user.getAccountHolder().getId(), dto.getSource());
 	}
 	
-	
-	@PostMapping("/Me/CloseRegularIRAAccount")
+	@PostMapping("/Me/closeregulariraaccount")
 	@Secured("ROLE_USER")
 	public String closeRegularIRAAccount(@RequestBody TransactionDTO dto) throws NoResourceFoundException, AccountIsClosedException {
 		String username = jwtTokenUtil.getCurrentUserName();
@@ -125,7 +123,7 @@ public class UserController {
 		
 	}
 	
-	@PostMapping("/Me/CloseRolloverIRAAccount")
+	@PostMapping("/Me/closerolloveriraaccount")
 	@Secured("ROLE_USER")
 	public String closeRolloverIRAAccount(@RequestBody TransactionDTO dto) throws NoResourceFoundException, AccountIsClosedException {
 		String username = jwtTokenUtil.getCurrentUserName();
@@ -136,7 +134,7 @@ public class UserController {
 		return closingAccountService.closeRolloverIRAAccount(user.getAccountHolder().getId());
 	}
 	
-	@PostMapping("/Me/CloseRothIRAAccount")
+	@PostMapping("/Me/closerothiraaccount")
 	@Secured("ROLE_USER")
 	public String closeRothIRAAccount(@RequestBody TransactionDTO dto) throws NoResourceFoundException, AccountIsClosedException {
 		String username = jwtTokenUtil.getCurrentUserName();
@@ -146,6 +144,18 @@ public class UserController {
 			throw new AccountIsClosedException("Account is Closed");
 		return closingAccountService.closeRothIRAAccount(user.getAccountHolder().getId());
 	}
+	@PostMapping("/Me/closesavingsaccount")
+    @Secured("ROLE_USER")
+    public String closeSavingsAccount(@RequestBody String msg) throws NoResourceFoundException, 
+    AccountIsClosedException {
+        String username = jwtTokenUtil.getCurrentUserName();
+        User user = userService.getUserByUserName(username);
+        if(user.getAccountHolder() == null) 
+            throw new AccountIsClosedException("Accountholder has been deleted");
+        
+        return closingAccountService.closeSavingsAccount(user.getAccountHolder().getId());
+    }
+	
 	
 
 	

@@ -1,6 +1,8 @@
 package com.meritamerica.assignment7.services;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,9 @@ import com.meritamerica.assignment7.models.RothIRAAccount;
 import com.meritamerica.assignment7.models.SavingsAccount;
 import com.meritamerica.assignment7.repository.AccountHolderRepository;
 import com.meritamerica.assignment7.repository.AccountHoldersContactDetailsRepository;
+import com.meritamerica.assignment7.repository.SavingsAccountRepository;
+import com.meritamerica.assignment7.security.models.User;
+import com.meritamerica.assignment7.security.repository.UserRepository;
 
 @Service
 public class AccountHolderServiceImpl implements AccountHolderService {
@@ -27,6 +32,12 @@ public class AccountHolderServiceImpl implements AccountHolderService {
 	
 	@Autowired
 	private AccountHoldersContactDetailsRepository contactDetailsRepository;
+	
+	@Autowired
+	private SavingsAccountRepository savingsAccountRepository;
+	
+	@Autowired
+	private UserRepository userRepository;
 	
 	@Override
 	public AccountHolder addAccountHolder(AccountHolder accountHolder) throws InvalidAccountDetailsException  {
@@ -47,7 +58,7 @@ public class AccountHolderServiceImpl implements AccountHolderService {
 		if (accountHolder == null) {
 			throw new NoResourceFoundException("Invalid id");
 		}
-		return accountHolder.getCheckingAccountList();
+		return accountHolder.getCheckingAccountList().stream().filter(t -> t.isOpen()).collect(Collectors.toList());
 	}
 
 	@Override
@@ -56,7 +67,10 @@ public class AccountHolderServiceImpl implements AccountHolderService {
 		if (accountHolder == null) {
 			throw new NoResourceFoundException("Invalid id");
 		}
-		return accountHolder.getSavingsAccountList();
+		//return accountHolder.getSavingsAccountList();
+		//Optional<SavingsAccount> savings=savingsAccountRepository.findByIsOpen(true);
+		
+			return accountHolder.getSavingsAccountList().stream().filter(t -> t.isOpen()).collect(Collectors.toList());
 	}
 
 	@Override
@@ -65,7 +79,7 @@ public class AccountHolderServiceImpl implements AccountHolderService {
 		if (accountHolder == null) {
 			throw new NoResourceFoundException("Invalid id");
 		}
-		return accountHolder.getCdAccList();
+		return accountHolder.getCdAccList().stream().filter(t -> t.isOpen()).collect(Collectors.toList());
 	}
 
 	@Override
@@ -104,16 +118,16 @@ public class AccountHolderServiceImpl implements AccountHolderService {
 		if (accountHolder == null) {
 			throw new NoResourceFoundException("Invalid id");
 		}
-		return accountHolder.getDbaCheckingAccountList();
+		return accountHolder.getDbaCheckingAccountList().stream().filter(t -> t.isOpen()).collect(Collectors.toList());
 	}
 
 	@Override
-	public List<RegularIRAAccount> getRegularIRACheckingAccount(int accountHolderId) throws NoResourceFoundException {
+	public List<RegularIRAAccount> getRegularIRAAccount(int accountHolderId) throws NoResourceFoundException {
 		AccountHolder accountHolder = accountHolderRepository.findById(accountHolderId).orElse(null);
 		if (accountHolder == null) {
 			throw new NoResourceFoundException("Invalid id");
 		}
-		return accountHolder.getRegularIRAAccountList();
+		return accountHolder.getRegularIRAAccountList().stream().filter(t -> t.isOpen()).collect(Collectors.toList());
 	}
 
 	@Override
@@ -122,7 +136,7 @@ public class AccountHolderServiceImpl implements AccountHolderService {
 		if (accountHolder == null) {
 			throw new NoResourceFoundException("Invalid id");
 		}
-		return accountHolder.getRothIRAAccountList();
+		return accountHolder.getRothIRAAccountList().stream().filter(t -> t.isOpen()).collect(Collectors.toList());
 	}
 
 	@Override
@@ -131,7 +145,7 @@ public class AccountHolderServiceImpl implements AccountHolderService {
 		if (accountHolder == null) {
 			throw new NoResourceFoundException("Invalid id");
 		}
-		return accountHolder.getRolloverIRAAccountList();
+		return accountHolder.getRolloverIRAAccountList().stream().filter(t -> t.isOpen()).collect(Collectors.toList());
 	}
 	@Override
 	public AccountHoldersContactDetails updateContactDetails(
@@ -152,6 +166,12 @@ public class AccountHolderServiceImpl implements AccountHolderService {
 		currentAccHolder.setSsn(accountHolder.getSsn());
 		
 		return accountHolderRepository.save(currentAccHolder);
+	}
+
+	@Override
+	public List<User> getUsers() {
+		// TODO Auto-generated method stub
+		return userRepository.findAll();
 	}
 
 }

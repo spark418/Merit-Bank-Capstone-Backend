@@ -18,7 +18,14 @@ import com.meritamerica.assignment7.models.RothIRAAccount;
 import com.meritamerica.assignment7.models.SavingsAccount;
 import com.meritamerica.assignment7.models.TransferTransaction;
 import com.meritamerica.assignment7.repository.AccountHolderRepository;
+import com.meritamerica.assignment7.repository.CDAccountRepository;
+import com.meritamerica.assignment7.repository.CDOfferingRepository;
 import com.meritamerica.assignment7.repository.CheckingAccountRepository;
+import com.meritamerica.assignment7.repository.DBACheckingAccountRepository;
+import com.meritamerica.assignment7.repository.RegularIRAAccountRepository;
+import com.meritamerica.assignment7.repository.RolloverIRAAccountRepository;
+import com.meritamerica.assignment7.repository.RothIRAAccountRepository;
+import com.meritamerica.assignment7.repository.SavingsAccountRepository;
 import com.meritamerica.assignment7.security.services.UserService;
 
 @Service
@@ -35,6 +42,27 @@ public class ClosingAccountImpl implements ClosingAccountService{
 	
 	@Autowired
 	CheckingAccountRepository checkingAccountRepository;
+		
+	@Autowired
+	SavingsAccountRepository savingsAccountRepository;
+	
+	@Autowired
+	CDAccountRepository cdAccountRepository;
+	
+//	@Autowired
+//	CDOfferingRepository cdOfferingRepository;
+	
+	@Autowired
+	DBACheckingAccountRepository dbaCheckingAccountRepository;
+	
+	@Autowired
+	RolloverIRAAccountRepository rolloverIRAAccountRepository;
+	
+	@Autowired
+	RothIRAAccountRepository rothIRAAccountRepository;
+	
+	@Autowired
+	RegularIRAAccountRepository regularIRAAccountRepository;
 	
 	@Autowired
     UserService userService;
@@ -44,21 +72,21 @@ public class ClosingAccountImpl implements ClosingAccountService{
 	AccountHolderRepository accountHolderRepository;
 	
 	@Override
-	public String closeCheckingAccount(int id) throws NoResourceFoundException {
-		// TODO Auto-generated method stud
-		AccountHolder accountHolder = accountHolderRepository.findById(id).orElse(null);
-		CheckingAccount checking = accountHolder.getCheckingAccountList().get(0);
-		SavingsAccount savings = accountHolder.getSavingsAccountList().get(0);
-		  
-		TransferTransaction transaction = new TransferTransaction(checking.getBalance(), savings.getBalance() + checking.getBalance(), 
-		checking.getBalance() + -checking.getBalance(), TransactionType.Transfer, checking, savings);
-		savings.setBalance(savings.getBalance() + checking.getBalance());
-		checking.setBalance(0);
-		checking.setOpen(false);
-		transactionService.addTransferTransaction(transaction, checking, savings);
-		
-		return "Checking Account is closed";
-	}
+    public String closeCheckingAccount(int id) throws NoResourceFoundException {
+        // TODO Auto-generated method stud
+        AccountHolder accountHolder = accountHolderRepository.findById(id).orElse(null);
+        CheckingAccount checking = accountHolder.getCheckingAccountList().get(0);
+        SavingsAccount savings = accountHolder.getSavingsAccountList().get(0);
+          
+        TransferTransaction transaction = new TransferTransaction(checking.getBalance(), savings.getBalance() + checking.getBalance(), 
+        checking.getBalance() + -checking.getBalance(), TransactionType.Transfer, checking, savings);
+        savings.setBalance(savings.getBalance() + checking.getBalance());
+        checking.setBalance(0);
+        checking.setOpen(false);
+        transactionService.addTransferTransaction(transaction, checking, savings);
+        
+        return "Checking Account is closed";
+    }
 
 	@Override
 	public String closeDBAAccount(int id, long num) throws NoResourceFoundException {
@@ -120,10 +148,30 @@ public class ClosingAccountImpl implements ClosingAccountService{
 	}
 
 	@Override
-	public String closeSavingsAccount(int id) throws NoResourceFoundException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public String closeSavingsAccount(int id) throws NoResourceFoundException {
+        // TODO Auto-generated method stub
+        AccountHolder accountHolder = accountHolderRepository.findById(id).orElse(null);
+        
+        for(int i = 0; i < accountHolder.allAccounts().size(); i++) {
+            if(accountHolder.getCdAccList().size() != 0)
+              cdAccountRepository.delete( accountHolder.getCdAccList().remove(i));    
+            if(accountHolder.getDbaCheckingAccountList().size() != 0)
+              dbaCheckingAccountRepository.delete(accountHolder.getDbaCheckingAccountList().remove(i));
+            if(accountHolder.getCheckingAccountList().size() != 0)
+              checkingAccountRepository.delete(accountHolder.getCheckingAccountList().remove(i));
+            if(accountHolder.getSavingsAccountList().size() != 0)
+              savingsAccountRepository.delete(accountHolder.getSavingsAccountList().remove(i));
+            if(accountHolder.getRegularIRAAccountList().size() != 0)
+              regularIRAAccountRepository.delete(accountHolder.getRegularIRAAccountList().remove(i));
+            if(accountHolder.getRolloverIRAAccountList().size() != 0)
+              rothIRAAccountRepository.delete(accountHolder.getRothIRAAccountList().remove(i));
+            if(accountHolder.getRolloverIRAAccountList().size() != 0)
+              rolloverIRAAccountRepository.delete(accountHolder.getRolloverIRAAccountList().remove(i));
+            
+        }
+        accountHolderRepository.delete(accountHolder);
+        return "All of your Banking records has been deleted from this bank";
+    }
 	
 	private DBACheckingAccount findDBAByAccountNum(List<DBACheckingAccount> accounts, long num) 
 			throws NoResourceFoundException {

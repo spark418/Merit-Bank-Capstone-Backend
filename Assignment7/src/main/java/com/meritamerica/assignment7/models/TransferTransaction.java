@@ -4,12 +4,16 @@ import java.util.Date;
 
 import javax.persistence.Entity;
 
+import com.meritamerica.assignment7.enumerations.TransactionAction;
 import com.meritamerica.assignment7.enumerations.TransactionType;
 import com.meritamerica.assignment7.exceptions.NegativeAmountException;
 @Entity
 public class TransferTransaction extends Transaction{
 	
 	private double targetBalance;
+	private TransactionAction action;
+	
+	
 
 	public TransferTransaction() {}
 
@@ -22,8 +26,16 @@ public class TransferTransaction extends Transaction{
 		super.setTargetAccount(target);
 		this.setTargetBalance(targetBalance);
 		super.setDate(new Date());
+		this.setAction(TransactionAction.Transfer);
 	}
 	
+	public TransactionAction getAction() {
+		return action;
+	}
+
+	public void setAction(TransactionAction action) {
+		this.action = action;
+	}
 	
 
 	public double getTargetBalance() {
